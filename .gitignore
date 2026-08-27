@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+*.log
+.loop-paused
+.escalate-rung
+ledger.jsonl
+results.json
+report.html
