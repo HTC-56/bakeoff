@@ -12,8 +12,12 @@ mirroring :func:`grade_exact` below, and give it a test class in
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
+from typing import Any
+
+import jsonschema
 
 
 class GraderConfigError(ValueError):
@@ -136,3 +140,35 @@ def grade_numeric_tolerance(
         False,
         f"{parsed} is not within {tolerance} of {expected}",
     )
+
+
+def grade_json_schema(
+    completion: str,
+    schema: dict[str, Any],
+) -> GradeResult:
+    """Pass when the completion is valid JSON that satisfies ``schema``.
+
+    The completion is parsed with ``json.loads()``. A completion that is not
+    valid JSON is a **failing grade**, not an exception — return a failed
+    :class:`GradeResult` whose detail says the completion was not JSON.
+
+    Valid JSON that does not satisfy the schema is a failing grade; the
+    validator's own message (``exc.message``) appears in the detail.
+
+    A malformed schema is an **author error**: catch
+    ``jsonschema.SchemaError`` and raise :exc:`GraderConfigError`, exactly
+    the way :func:`grade_regex` does for a pattern that will not compile.
+    """
+    try:
+        instance = json.loads(completion.strip())
+    except (ValueError, TypeError) as exc:
+        return _binary(False, f"completion is not valid JSON: {exc}")
+
+    try:
+        jsonschema.validate(instance, schema)
+    except jsonschema.SchemaError as exc:
+        raise GraderConfigError(f"schema is invalid: {exc.message}") from exc
+    except jsonschema.ValidationError as exc:
+        return _binary(False, exc.message)
+
+    return _binary(True, "valid JSON matching the schema")

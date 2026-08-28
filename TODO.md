@@ -36,7 +36,7 @@ the five grader specs), plus `src/bakeoff/errors.py`. Read **§B0 in TASK_PHASE_
 first** — it holds the gate, the typing rules, and an index of what B0 gives you.
 Then grep your own section and build it.
 
-- [ ] §B1 — Add `grade_json_schema` to `src/bakeoff/graders.py`, mirroring
+- [x] §B1 — Add `grade_json_schema` to `src/bakeoff/graders.py`, mirroring
   `grade_numeric_tolerance`; a malformed schema raises `GraderConfigError`. Tests in
   `tests/test_graders.py`. Gate: §B0's five commands.
 - [ ] §B2 — Add `run_grader(spec, completion)` to `src/bakeoff/suite.py`: one

@@ -9,6 +9,7 @@ from bakeoff.graders import (
     GradeResult,
     grade_contains,
     grade_exact,
+    grade_json_schema,
     grade_numeric_tolerance,
     grade_regex,
 )
@@ -129,3 +130,31 @@ class TestGradeNumericTolerance:
     def test_negative_tolerance_raises_grader_config_error(self) -> None:
         with pytest.raises(GraderConfigError):
             grade_numeric_tolerance("4.0", 4.0, tolerance=-0.1)
+
+
+class TestGradeJsonSchema:
+    def test_matching_object_passes_with_score_one(self) -> None:
+        schema: dict[str, object] = {"type": "object", "required": ["name", "age"]}
+        result = grade_json_schema('{"name": "Ada", "age": 36}', schema)
+        assert result.passed is True
+        assert result.score == 1.0
+
+    def test_missing_required_property_fails_with_score_zero(self) -> None:
+        schema: dict[str, object] = {"type": "object", "required": ["name", "age"]}
+        result = grade_json_schema('{"name": "Ada"}', schema)
+        assert result.passed is False
+        assert result.score == 0.0
+
+    def test_failure_detail_mentions_missing_property(self) -> None:
+        schema: dict[str, object] = {"type": "object", "required": ["name", "age"]}
+        result = grade_json_schema('{"name": "Ada"}', schema)
+        assert "age" in result.detail
+
+    def test_non_json_completion_fails_rather_than_raise(self) -> None:
+        result = grade_json_schema("not json at all", {"type": "object"})
+        assert result.passed is False
+        assert result.score == 0.0
+
+    def test_malformed_schema_raises_grader_config_error(self) -> None:
+        with pytest.raises(GraderConfigError):
+            grade_json_schema("{}", {"type": "not-a-type"})
