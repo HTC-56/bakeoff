@@ -15,7 +15,7 @@ every task below assumes. Then grep your own section and build it.
 
 - [x] §A1 — Add `grade_contains` to `src/bakeoff/graders.py`, mirroring `grade_exact`;
   new `TestGradeContains` in `tests/test_graders.py`. Gate: §A0's five commands.
-- [ ] §A2 — Add `grade_regex` to `src/bakeoff/graders.py`; a pattern that will not
+- [x] §A2 — Add `grade_regex` to `src/bakeoff/graders.py`; a pattern that will not
   compile raises `GraderConfigError`. Tests in `tests/test_graders.py`. Gate: §A0.
 - [ ] §A3 — Add `grade_numeric_tolerance` to `src/bakeoff/graders.py`; non-numeric
   completion fails, negative tolerance raises. Tests in `tests/test_graders.py`. Gate: §A0.

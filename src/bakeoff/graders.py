@@ -12,6 +12,7 @@ mirroring :func:`grade_exact` below, and give it a test class in
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 
@@ -74,3 +75,29 @@ def grade_contains(
     if needle in haystack:
         return _binary(True, f"contains {substring!r}")
     return _binary(False, f"missing {substring!r}")
+
+
+def grade_regex(
+    completion: str,
+    pattern: str,
+    *,
+    fullmatch: bool = False,
+) -> GradeResult:
+    """Pass when a regular expression matches ``completion``.
+
+    With ``fullmatch`` (the default ``False``) a match anywhere in the completion
+    passes :func:`re.search`; when ``True`` the pattern must match the whole
+    completion :func:`re.fullmatch`.
+
+    A pattern that does not compile raises :exc:`GraderConfigError` — this is an
+    author error, never a failing case.
+    """
+    try:
+        compiled = re.compile(pattern)
+    except re.error as exc:
+        raise GraderConfigError(f"pattern {pattern!r} is not a valid regex: {exc}") from exc
+
+    match = compiled.fullmatch(completion) if fullmatch else compiled.search(completion)
+    if match:
+        return _binary(True, f"regex {pattern!r} matches")
+    return _binary(False, f"regex {pattern!r} does not match")

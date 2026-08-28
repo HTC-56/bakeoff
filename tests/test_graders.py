@@ -2,7 +2,15 @@
 
 from __future__ import annotations
 
-from bakeoff.graders import GradeResult, grade_contains, grade_exact
+import pytest
+
+from bakeoff.graders import (
+    GraderConfigError,
+    GradeResult,
+    grade_contains,
+    grade_exact,
+    grade_regex,
+)
 
 
 class TestGradeExact:
@@ -51,3 +59,40 @@ class TestGradeContains:
     def test_failure_detail_mentions_missing_substring(self) -> None:
         result = grade_contains("the answer is 42", "missing")
         assert "missing" in result.detail
+
+
+class TestGradeRegex:
+    def test_pattern_matching_part_of_completion_passes(self) -> None:
+        result = grade_regex("the answer is 42", r"\d+")
+        assert result.passed is True
+        assert result.score == 1.0
+
+    def test_pattern_matching_nothing_fails_with_score_zero(self) -> None:
+        result = grade_regex("the answer is 42", r"\d+")
+        assert result.passed is True
+        result2 = grade_regex("no digits here", r"\d+")
+        assert result2.passed is False
+        assert result2.score == 0.0
+
+    def test_partial_pattern_fails_when_fullmatch_true(self) -> None:
+        result = grade_regex("hello", r"hel", fullmatch=True)
+        assert result.passed is False
+        assert result.score == 0.0
+
+    def test_partial_pattern_passes_by_default(self) -> None:
+        result = grade_regex("hello", r"hel")
+        assert result.passed is True
+
+    def test_uncompilable_pattern_raises_grader_config_error(self) -> None:
+        with pytest.raises(
+            GraderConfigError,
+            match=r"pattern '\('\s*is not a valid regex",
+        ):
+            grade_regex("anything", "(")
+
+    def test_raised_message_contains_offending_pattern(self) -> None:
+        try:
+            grade_regex("anything", "[bad")
+            raise AssertionError("GraderConfigError not raised")
+        except GraderConfigError as exc:
+            assert "[bad" in str(exc)
