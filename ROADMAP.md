@@ -9,11 +9,11 @@ are the one permitted exception to append-only docs.
 | 2 | Task suites as files | SHIPPED | B | |
 | 3 | Pure graders (exact, contains, regex, json-schema, numeric-tolerance) | SHIPPED | B | all five shipped; run_grader dispatches a case spec to its grader |
 | 4 | Pre-registered bar + freeze/REBARRED mechanic | NOT BUILT | B | bar model and per-pair thresholds shipped in B; freeze, lockfile and REBARRED pending |
-| 5 | Runner (async httpx, retries, concurrency, usage capture) | PARTIAL | C | `runner.py` shipped in C0; stub-backed end-to-end proof is §C4 |
+| 5 | Runner (async httpx, retries, concurrency, usage capture) | SHIPPED | C | `runner.py` shipped in C0; stub-backed end-to-end proof is §C4; JSONL ledger is §C5 |
 | 6 | Report (self-contained HTML + results.json + exit code) | NOT BUILT | — | hero screenshot; its scoring input (`scoring.py`, exit code) lands in C |
 | 7 | CLI (init, validate, freeze, run, report) | NOT BUILT | — | |
 | 8 | Bundled stub OpenAI-compatible server | SHIPPED | A |
-| 9 | Deploy-grade packaging (pyproject, CI, quickstart, ledger) | PARTIAL | C | pyproject, CI, scrub-check, verify.sh, README shipped; JSONL ledger is §C5; README quickstart waits on the CLI |
+| 9 | Deploy-grade packaging (pyproject, CI, quickstart, ledger) | PARTIAL | C | pyproject, CI, scrub-check, verify.sh, README shipped; JSONL ledger shipped in C; README quickstart and docs/PROCESS.md are what is left |
 | — | docs/PROCESS.md (the loop story) | NOT BUILT | — | written near the end, when there is a ledger to excerpt |
 
 When every row reads SHIPPED and verify.sh is green, the project is done — the

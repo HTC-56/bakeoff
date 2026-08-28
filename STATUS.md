@@ -25,3 +25,11 @@ with per-pair overrides), task suites as files (five grader spec classes and the
 under `examples/quickstart`, and validation-error tests in
 `TestManifestErrors` and `TestSuiteErrors`. Still missing: the freeze/lockfile and
 REBARRED mechanic, the runner, the report, the CLI, `docs/PROCESS.md`.
+
+## Phase C
+
+Phase C shipped the runner (`runner.py`: retries, backoff, per-candidate concurrency,
+error outcomes), the malformed stub reply, `summarize`, `judge`, and `exit_code` in
+`scoring.py`, the JSONL run ledger (`ledger.py`), and end-to-end proofs against the
+bundled stub. Still missing: the freeze/lockfile and REBARRED mechanic, the report,
+the CLI, `docs/PROCESS.md`.

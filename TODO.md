@@ -73,7 +73,7 @@ grep your own section and build it.
 - [x] §C4 — Prove the runner against the bundled stub: new `TestRunAuditionEndToEnd` in
   `tests/test_runner.py`, running the quickstart audition plus a 503 and a malformed case.
   Tests only, no source changes. Gate: §C0.
-- [ ] §C5 — Write `src/bakeoff/ledger.py` (`run_record`, `append_run`, `read_ledger`) and
+- [x] |- §C5 — Write `src/bakeoff/ledger.py` (`run_record`, `append_run`, `read_ledger`) and
   `tests/test_ledger.py`. One JSON object per line, one line per run. Gate: §C0.
-- [ ] |- §C6 — Run `bash verify.sh`, then append a Phase C section to `STATUS.md` and update
+- [x] |- §C6 — Run `bash verify.sh`, then append a Phase C section to `STATUS.md` and update
   row 5, row 9 and the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh` green.
