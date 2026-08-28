@@ -54,3 +54,26 @@ Then grep your own section and build it.
 - [x] |- §B6 — Run `bash verify.sh`, then append a Phase B section to `STATUS.md` and
   update rows 1-4 plus the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh`
   green.
+
+## Phase C: the runner — see TASK_PHASE_C.md
+
+The hard module is already committed (`feat(C0)`): `src/bakeoff/runner.py` (retries,
+backoff, per-candidate concurrency, errors as outcomes) and `src/bakeoff/scoring.py`
+(`percentile` plus the `PairSummary`/`PairVerdict` shapes). Read **§C0 in
+TASK_PHASE_C.md first** — gate, typing rules, and an index of what C0 gives you. Then
+grep your own section and build it.
+
+- [ ] §C1 — Add `malformed_reply` to `src/bakeoff/stub.py` and wire it into `do_POST`, so a
+  `malformed:` prompt returns HTTP 200 with a body that is not a chat completion. Tests in
+  `tests/test_stub_end_to_end.py`. Gate: §C0's five commands.
+- [ ] §C2 — Add `summarize(outcomes)` to `src/bakeoff/scoring.py`: one `PairSummary` per
+  suite x candidate pair. Tests in `tests/test_scoring.py`. Gate: §C0.
+- [ ] §C3 — Add `judge(summaries, bar)` and `exit_code(verdicts)` to
+  `src/bakeoff/scoring.py`, using `Bar.for_pair`. Tests in `tests/test_scoring.py`. Gate: §C0.
+- [ ] §C4 — Prove the runner against the bundled stub: new `TestRunAuditionEndToEnd` in
+  `tests/test_runner.py`, running the quickstart audition plus a 503 and a malformed case.
+  Tests only, no source changes. Gate: §C0.
+- [ ] §C5 — Write `src/bakeoff/ledger.py` (`run_record`, `append_run`, `read_ledger`) and
+  `tests/test_ledger.py`. One JSON object per line, one line per run. Gate: §C0.
+- [ ] |- §C6 — Run `bash verify.sh`, then append a Phase C section to `STATUS.md` and update
+  row 5, row 9 and the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh` green.
