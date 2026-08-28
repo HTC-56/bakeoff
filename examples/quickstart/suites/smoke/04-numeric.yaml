@@ -1,0 +1,6 @@
+prompt: "echo: 3.14"
+grader:
+  kind: numeric_tolerance
+  expected: 3.14
+  tolerance: 0.01
+reference: "3.14"

@@ -1,0 +1,5 @@
+prompt: "echo: The answer is 42"
+grader:
+  kind: contains
+  substring: "42"
+reference: "The answer is 42"

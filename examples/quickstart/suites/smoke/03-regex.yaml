@@ -1,0 +1,5 @@
+prompt: "echo: hello world 123"
+grader:
+  kind: regex
+  pattern: "\\d+"
+reference: "hello world 123"

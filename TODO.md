@@ -45,7 +45,7 @@ Then grep your own section and build it.
 - [x] §B3 — Add the `Audition` dataclass and `load_audition` to
   `src/bakeoff/manifest.py`, loading every suite the manifest names. Tests in
   `tests/test_manifest.py`. Gate: §B0.
-- [ ] §B4 — Write `examples/quickstart/audition.yaml` and five case files under
+- [x] §B4 — Write `examples/quickstart/audition.yaml` and five case files under
   `examples/quickstart/suites/smoke/`, one per grader kind, all passing against the
   bundled stub. New `tests/test_examples.py`. Gate: §B0.
 - [ ] §B5 — Assert the validation promise: `TestManifestErrors` in

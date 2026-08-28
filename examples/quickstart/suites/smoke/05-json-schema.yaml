@@ -1,0 +1,9 @@
+prompt: "json: {\"name\": \"Ada\", \"age\": 36}"
+grader:
+  kind: json_schema
+  schema:
+    type: object
+    required:
+      - name
+      - age
+reference: '{"name": "Ada", "age": 36}'
