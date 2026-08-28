@@ -37,6 +37,7 @@ and is not built yet.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +45,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 from .errors import ConfigError, format_validation_error
+from .suite import Suite, SuiteError, load_suite
 
 MANIFEST_VERSION = 1
 THRESHOLD_FIELDS = ("min_pass_rate", "max_p95_latency_ms", "max_tokens_per_case")
@@ -235,3 +237,41 @@ def load_manifest(path: str | Path) -> Manifest:
     except yaml.YAMLError as exc:
         raise ManifestError(f"{manifest_path}: not valid YAML: {exc}") from exc
     return parse_manifest(decoded, source=str(manifest_path))
+
+
+@dataclass(frozen=True)
+class Audition:
+    """A loaded audition: the manifest and every suite it names, in manifest order.
+
+    Use :meth:`suite` to look up a suite by name — it raises :exc:`KeyError`
+    when there is no such suite.
+    """
+
+    manifest: Manifest
+    suites: tuple[Suite, ...]
+
+    def suite(self, name: str) -> Suite:
+        """The suite with this name, or :exc:`KeyError`."""
+        for suite in self.suites:
+            if suite.name == name:
+                return suite
+        raise KeyError(name)
+
+
+def load_audition(path: str | Path) -> Audition:
+    """Load a manifest and every suite it references.
+
+    Raises :exc:`ManifestError` when the manifest is unreadable, is not valid
+    YAML, fails validation, or when one of the named suite directories cannot
+    be loaded (the error names the manifest path, the suite name, and the
+    resolved directory).
+    """
+    manifest = load_manifest(path)
+    suites: list[Suite] = []
+    for ref in manifest.suites:
+        directory = suite_dir(path, ref)
+        try:
+            suites.append(load_suite(directory, name=ref.name))
+        except SuiteError as exc:
+            raise ManifestError(f"{path}: suite {ref.name!r} at {str(directory)!r}: {exc}") from exc
+    return Audition(manifest=manifest, suites=tuple(suites))

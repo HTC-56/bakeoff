@@ -42,7 +42,7 @@ Then grep your own section and build it.
 - [x] §B2 — Add `run_grader(spec, completion)` to `src/bakeoff/suite.py`: one
   `isinstance` branch per grader spec, calling its grader. Tests in
   `tests/test_suite.py`. Gate: §B0.
-- [ ] §B3 — Add the `Audition` dataclass and `load_audition` to
+- [x] §B3 — Add the `Audition` dataclass and `load_audition` to
   `src/bakeoff/manifest.py`, loading every suite the manifest names. Tests in
   `tests/test_manifest.py`. Gate: §B0.
 - [ ] §B4 — Write `examples/quickstart/audition.yaml` and five case files under

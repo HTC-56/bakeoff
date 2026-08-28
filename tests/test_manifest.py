@@ -8,12 +8,16 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from bakeoff.manifest import (
     Bar,
     BarOverride,
     Manifest,
+    ManifestError,
     SuiteRef,
     Thresholds,
+    load_audition,
     load_manifest,
     parse_manifest,
     suite_dir,
@@ -146,3 +150,72 @@ class TestBarForPair:
         bar.for_pair("smoke", "stub")
         assert bar.defaults.min_pass_rate == 0.8
         assert bar.defaults.max_tokens_per_case == 200
+
+
+_EXACT_CASE = """
+prompt: "echo: 4"
+grader:
+  kind: exact
+  expected: "4"
+reference: "4"
+"""
+
+
+class TestLoadAudition:
+    def _write_audition(self, tmp_path: Path, *, suites: dict[str, str] | None = None) -> Path:
+        """Write a minimal manifest and return its path, optionally creating a suite dir."""
+        manifest_path = write_manifest(tmp_path)
+        if suites is not None:
+            suite_dir_path = tmp_path / "suites" / "smoke"
+            suite_dir_path.mkdir(parents=True)
+            for fname, content in suites.items():
+                (suite_dir_path / fname).write_text(content)
+        return manifest_path
+
+    def test_a_manifest_with_a_suite_dir_loads_and_carries_cases(self, tmp_path: Path) -> None:
+        manifest_path = self._write_audition(tmp_path, suites={"01.yaml": _EXACT_CASE})
+        audition = load_audition(manifest_path)
+        assert len(audition.suites) == 1
+        assert len(audition.suites[0].cases) == 1
+        assert audition.suites[0].cases[0].reference == "4"
+
+    def test_the_suite_is_named_for_the_suite_ref(self, tmp_path: Path) -> None:
+        # Manifest says path: suites/smoke but we give it an explicit name in the ref
+        text = """
+version: 1
+candidates:
+  - name: stub
+    base_url: http://localhost:8000
+    model: stub-model
+suites:
+  - name: arithmetic
+    path: suites/smoke
+bar:
+  defaults:
+    min_pass_rate: 0.8
+    max_p95_latency_ms: 2000
+    max_tokens_per_case: 200
+"""
+        path = tmp_path / "audition.yaml"
+        path.write_text(text)
+        suite_dir_path = tmp_path / "suites" / "smoke"
+        suite_dir_path.mkdir(parents=True)
+        (suite_dir_path / "a.yaml").write_text(_EXACT_CASE)
+        audition = load_audition(path)
+        assert audition.suites[0].name == "arithmetic"
+
+    def test_audition_suite_lookup_and_key_error(self, tmp_path: Path) -> None:
+        manifest_path = self._write_audition(tmp_path, suites={"01.yaml": _EXACT_CASE})
+        audition = load_audition(manifest_path)
+        # Known name returns the suite
+        assert audition.suite("smoke") is audition.suites[0]
+        # Unknown name raises KeyError
+        with pytest.raises(KeyError, match="nonexistent"):
+            audition.suite("nonexistent")
+
+    def test_a_missing_suite_dir_raises_manifest_error(self, tmp_path: Path) -> None:
+        manifest_path = write_manifest(tmp_path)
+        # Manifest references suites/smoke but we never create it
+        with pytest.raises(ManifestError) as exc:
+            load_audition(manifest_path)
+        assert "smoke" in str(exc.value)
