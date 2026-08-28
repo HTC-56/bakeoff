@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import pytest
 
+from bakeoff.manifest import Bar
 from bakeoff.runner import CaseOutcome
-from bakeoff.scoring import percentile, summarize
+from bakeoff.scoring import exit_code, judge, percentile, summarize
 
 
 def outcome(
@@ -114,3 +115,100 @@ class TestSummarize:
         ]
         result = summarize(outcomes)
         assert result[0].max_tokens_per_case == 15
+
+
+class TestJudge:
+    def test_a_summary_clearing_all_thresholds_is_met_with_empty_reasons(self) -> None:
+        summaries = summarize([outcome(case_id="c1")])
+        bar = Bar.model_validate(
+            {
+                "defaults": {
+                    "min_pass_rate": 0.8,
+                    "max_p95_latency_ms": 1000.0,
+                    "max_tokens_per_case": 100,
+                },
+            }
+        )
+        verdicts = judge(summaries, bar)
+        assert len(verdicts) == 1
+        assert verdicts[0].met is True
+        assert verdicts[0].reasons == ()
+
+    def test_pass_rate_under_the_bar_is_not_met(self) -> None:
+        summaries = summarize([outcome(case_id="c1", passed=False)])
+        bar = Bar.model_validate(
+            {
+                "defaults": {
+                    "min_pass_rate": 0.8,
+                    "max_p95_latency_ms": 1000.0,
+                    "max_tokens_per_case": 100,
+                },
+            }
+        )
+        verdicts = judge(summaries, bar)
+        assert verdicts[0].met is False
+        assert any("pass rate" in r for r in verdicts[0].reasons)
+
+    def test_p95_latency_over_the_bar_is_not_met(self) -> None:
+        summaries = summarize([outcome(case_id="c1", latency_ms=5000.0)])
+        bar = Bar.model_validate(
+            {
+                "defaults": {
+                    "min_pass_rate": 0.8,
+                    "max_p95_latency_ms": 1000.0,
+                    "max_tokens_per_case": 100,
+                },
+            }
+        )
+        verdicts = judge(summaries, bar)
+        assert verdicts[0].met is False
+        assert any("latency" in r for r in verdicts[0].reasons)
+
+    def test_a_bar_override_names_the_pair_specific_threshold(self) -> None:
+        # 3 of 4 pass → 0.75: clears default (0.5) but fails override (0.9)
+        summaries = summarize(
+            [
+                outcome(suite="smoke", candidate="alpha", case_id="c1"),
+                outcome(suite="smoke", candidate="alpha", case_id="c2"),
+                outcome(suite="smoke", candidate="alpha", case_id="c3"),
+                outcome(suite="smoke", candidate="alpha", case_id="c4", passed=False),
+            ]
+        )
+        bar = Bar.model_validate(
+            {
+                "defaults": {
+                    "min_pass_rate": 0.5,
+                    "max_p95_latency_ms": 1000.0,
+                    "max_tokens_per_case": 100,
+                },
+                "overrides": [
+                    {
+                        "suite": "smoke",
+                        "candidate": "alpha",
+                        "min_pass_rate": 0.9,
+                    },
+                ],
+            }
+        )
+        verdicts = judge(summaries, bar)
+        assert verdicts[0].met is False
+        assert any("pass rate" in r for r in verdicts[0].reasons)
+        # The default bar would have been met (0.75 >= 0.5)
+        # but the tighter override (0.9) is what was applied
+        assert verdicts[0].thresholds.min_pass_rate == 0.9
+
+    def test_exit_code_is_0_when_all_met_and_1_when_not(self) -> None:
+        bar = Bar.model_validate(
+            {
+                "defaults": {
+                    "min_pass_rate": 0.8,
+                    "max_p95_latency_ms": 1000.0,
+                    "max_tokens_per_case": 100,
+                },
+            }
+        )
+        passed = judge(summarize([outcome(case_id="c1")]), bar)
+        failed = judge(summarize([outcome(case_id="c1", passed=False)]), bar)
+        assert exit_code(passed) == 0
+        assert exit_code(failed) == 1
+        assert exit_code(passed + failed) == 1

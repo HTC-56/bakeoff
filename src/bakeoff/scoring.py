@@ -21,7 +21,7 @@ import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from .manifest import Thresholds
+from .manifest import Bar, Thresholds
 from .runner import CaseOutcome
 
 
@@ -112,3 +112,50 @@ def summarize(outcomes: Sequence[CaseOutcome]) -> tuple[PairSummary, ...]:
             )
         )
     return tuple(summaries)
+
+
+def judge(summaries: Sequence[PairSummary], bar: Bar) -> tuple[PairVerdict, ...]:
+    """One :class:`PairVerdict` per summary, judged against the bar.
+
+    Uses :meth:`Bar.for_pair` to fetch the thresholds for each ``(suite, candidate)``
+    pair, then checks the three bar dimensions. ``met`` is true only when none of the
+    three reasons fire; equal to the threshold counts as clear.
+    """
+    verdicts: list[PairVerdict] = []
+    for summary in summaries:
+        thresholds = bar.for_pair(summary.suite, summary.candidate)
+        reasons: list[str] = []
+
+        if summary.pass_rate < thresholds.min_pass_rate:
+            reasons.append(
+                f"pass rate {summary.pass_rate:.2f} is below the bar {thresholds.min_pass_rate:.2f}"
+            )
+        if summary.p95_latency_ms > thresholds.max_p95_latency_ms:
+            reasons.append(
+                f"p95 latency {summary.p95_latency_ms:.0f}ms exceeds the bar "
+                f"{thresholds.max_p95_latency_ms:.0f}ms"
+            )
+        if summary.max_tokens_per_case > thresholds.max_tokens_per_case:
+            reasons.append(
+                f"max tokens {summary.max_tokens_per_case} exceeds the bar "
+                f"{thresholds.max_tokens_per_case}"
+            )
+
+        verdicts.append(
+            PairVerdict(
+                summary=summary,
+                thresholds=thresholds,
+                met=len(reasons) == 0,
+                reasons=tuple(reasons),
+            )
+        )
+    return tuple(verdicts)
+
+
+def exit_code(verdicts: Sequence[PairVerdict]) -> int:
+    """Return 0 when every verdict is met, 1 otherwise.
+
+    This is the exit code a CI regression test would use — 0 means the audition
+    passed, 1 means at least one pair missed the bar.
+    """
+    return 0 if all(v.met for v in verdicts) else 1

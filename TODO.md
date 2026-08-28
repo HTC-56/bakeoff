@@ -68,7 +68,7 @@ grep your own section and build it.
   `tests/test_stub_end_to_end.py`. Gate: §C0's five commands.
 - [x] §C2 — Add `summarize(outcomes)` to `src/bakeoff/scoring.py`: one `PairSummary` per
   suite x candidate pair. Tests in `tests/test_scoring.py`. Gate: §C0.
-- [ ] §C3 — Add `judge(summaries, bar)` and `exit_code(verdicts)` to
+- [x] §C3 — Add `judge(summaries, bar)` and `exit_code(verdicts)` to
   `src/bakeoff/scoring.py`, using `Bar.for_pair`. Tests in `tests/test_scoring.py`. Gate: §C0.
 - [ ] §C4 — Prove the runner against the bundled stub: new `TestRunAuditionEndToEnd` in
   `tests/test_runner.py`, running the quickstart audition plus a 503 and a malformed case.
