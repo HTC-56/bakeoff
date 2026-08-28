@@ -101,3 +101,38 @@ def grade_regex(
     if match:
         return _binary(True, f"regex {pattern!r} matches")
     return _binary(False, f"regex {pattern!r} does not match")
+
+
+def grade_numeric_tolerance(
+    completion: str,
+    expected: float,
+    *,
+    tolerance: float = 0.0,
+) -> GradeResult:
+    """Pass when the numeric completion is within ``tolerance`` of ``expected``.
+
+    The completion is stripped and parsed with ``float()``. A non-numeric completion
+    is a **failing grade**, not an exception. A negative ``tolerance`` raises
+    :exc:`GraderConfigError` — it is an author error.
+    """
+    if tolerance < 0:
+        raise GraderConfigError(f"tolerance {tolerance!r} must be non-negative")
+
+    try:
+        parsed = float(completion.strip())
+    except (ValueError, TypeError):
+        return _binary(
+            False,
+            f"completion {completion!r} is not numeric",
+        )
+
+    diff = abs(parsed - expected)
+    if diff <= tolerance:
+        return _binary(
+            True,
+            f"{parsed} is within {tolerance} of {expected}",
+        )
+    return _binary(
+        False,
+        f"{parsed} is not within {tolerance} of {expected}",
+    )

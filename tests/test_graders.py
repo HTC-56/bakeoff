@@ -9,6 +9,7 @@ from bakeoff.graders import (
     GradeResult,
     grade_contains,
     grade_exact,
+    grade_numeric_tolerance,
     grade_regex,
 )
 
@@ -96,3 +97,35 @@ class TestGradeRegex:
             raise AssertionError("GraderConfigError not raised")
         except GraderConfigError as exc:
             assert "[bad" in str(exc)
+
+
+class TestGradeNumericTolerance:
+    def test_exact_numeric_match_passes_with_default_tolerance(self) -> None:
+        result = grade_numeric_tolerance("3.14", 3.14)
+        assert result.passed is True
+        assert result.score == 1.0
+
+    def test_value_inside_tolerance_passes(self) -> None:
+        result = grade_numeric_tolerance("3.14", 3.1, tolerance=0.05)
+        assert result.passed is True
+        assert result.score == 1.0
+
+    def test_value_outside_tolerance_fails_with_score_zero(self) -> None:
+        result = grade_numeric_tolerance("5.0", 3.1, tolerance=0.05)
+        assert result.passed is False
+        assert result.score == 0.0
+
+    def test_value_at_tolerance_edge_passes(self) -> None:
+        result = grade_numeric_tolerance("3.15", 3.1, tolerance=0.05)
+        assert result.passed is True
+        assert result.score == 1.0
+
+    def test_non_numeric_completion_fails_rather_than_raise(self) -> None:
+        result = grade_numeric_tolerance("about four", 4.0)
+        assert result.passed is False
+        assert result.score == 0.0
+        assert "not numeric" in result.detail
+
+    def test_negative_tolerance_raises_grader_config_error(self) -> None:
+        with pytest.raises(GraderConfigError):
+            grade_numeric_tolerance("4.0", 4.0, tolerance=-0.1)
