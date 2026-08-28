@@ -12,7 +12,14 @@ import httpx
 
 from bakeoff.client import ClientError, Completion, build_payload, chat_completion
 from bakeoff.graders import grade_exact
-from bakeoff.stub import DEFAULT_REPLY, build_response, canned_reply, error_status, run_stub
+from bakeoff.stub import (
+    DEFAULT_REPLY,
+    build_response,
+    canned_reply,
+    error_status,
+    malformed_reply,
+    run_stub,
+)
 
 
 def ask(base_url: str, prompt: str, model: str = "stub-model") -> Completion:
@@ -98,3 +105,32 @@ class TestErrorStatus:
                 assert "500" in str(exc)
             else:  # pragma: no cover
                 raise AssertionError("expected a ClientError for a 500 status")
+
+
+class TestMalformedReply:
+    def test_malformed_prefix_returns_dict_without_choices(self) -> None:
+        body = malformed_reply("malformed: anything")
+        assert isinstance(body, dict)
+        assert "choices" not in body
+
+    def test_ordinary_prompt_returns_none(self) -> None:
+        assert malformed_reply("what is 2 + 2?") is None
+
+    def test_malformed_prompt_raises_client_error_mentions_choices(self) -> None:
+        with run_stub() as base_url:
+            try:
+                ask(base_url, "malformed: x")
+            except ClientError as exc:
+                assert "choices" in str(exc)
+            else:  # pragma: no cover
+                raise AssertionError("expected a ClientError for a malformed reply")
+
+    def test_malformed_prompt_returns_http_200_not_4xx_5xx(self) -> None:
+        with run_stub() as base_url:
+            try:
+                ask(base_url, "malformed: x")
+            except ClientError as exc:
+                assert "HTTP 4" not in str(exc)
+                assert "HTTP 5" not in str(exc)
+            else:  # pragma: no cover
+                raise AssertionError("expected a ClientError for a malformed reply")

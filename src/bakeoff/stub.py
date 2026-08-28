@@ -49,6 +49,20 @@ def canned_reply(prompt: str) -> str:
     return DEFAULT_REPLY
 
 
+def malformed_reply(prompt: str) -> dict[str, Any] | None:
+    """Return a non-chat-completion body when the prompt carries a ``malformed:`` prefix.
+
+    The stripped prompt must start with ``malformed:`` (e.g. ``malformed: anything``).
+    Returns a small dict that is valid JSON but has no ``choices`` key, or ``None``
+    when the prefix is absent.
+    """
+
+    text = prompt.strip()
+    if not text.startswith("malformed:"):
+        return None
+    return {"error": {"message": "malformed reply from model"}}
+
+
 def error_status(prompt: str) -> int | None:
     """Return an HTTP status code when the prompt carries a ``status:<NNN>:`` prefix.
 
@@ -153,6 +167,10 @@ class StubHandler(BaseHTTPRequestHandler):
                 err_code,
                 {"error": {"message": f"stub error {err_code}"}},
             )
+            return
+        malformed = malformed_reply(last_user_prompt(decoded))
+        if malformed is not None:
+            self._send_json(200, malformed)
             return
         self._send_json(200, build_response(decoded))
 

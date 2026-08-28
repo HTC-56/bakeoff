@@ -63,7 +63,7 @@ backoff, per-candidate concurrency, errors as outcomes) and `src/bakeoff/scoring
 TASK_PHASE_C.md first** — gate, typing rules, and an index of what C0 gives you. Then
 grep your own section and build it.
 
-- [ ] §C1 — Add `malformed_reply` to `src/bakeoff/stub.py` and wire it into `do_POST`, so a
+- [x] §C1 — Add `malformed_reply` to `src/bakeoff/stub.py` and wire it into `do_POST`, so a
   `malformed:` prompt returns HTTP 200 with a body that is not a chat completion. Tests in
   `tests/test_stub_end_to_end.py`. Gate: §C0's five commands.
 - [ ] §C2 — Add `summarize(outcomes)` to `src/bakeoff/scoring.py`: one `PairSummary` per
