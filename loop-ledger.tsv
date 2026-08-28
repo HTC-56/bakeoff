@@ -20,3 +20,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T10:59:32	plan	claude	commit	45	86350	26	3	409	plan next phase
 2026-08-28T11:45:10	loop	qwen	commit	77	13841	31	6	2785	- [ ] §D1 — Add `check_freeze(bar, lock)` to `src/bakeoff/freeze.py`, returning a
 2026-08-28T12:00:46	loop	qwen	commit	124	21373	51	14	934	- [ ] §D2 — Add `require_freeze(check, *, rebar)` to `src/bakeoff/freeze.py`: raises
+2026-08-28T12:21:25	loop	qwen	commit	106	13665	41	12	1237	- [ ] §D3 — Generate `examples/quickstart/audition.lock` with the command in §D3 and
