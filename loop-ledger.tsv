@@ -17,3 +17,5 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T10:37:21	loop	qwen	commit	127	22593	51	13	914	- [ ] §C3 — Add `judge(summaries, bar)` and `exit_code(verdicts)` to
 2026-08-28T10:42:35	loop	qwen	commit	154	31074	61	16	313	- [ ] §C4 — Prove the runner against the bundled stub: new `TestRunAuditionEndToEnd` in
 2026-08-28T10:51:23	loop	qwen	no-op	204	37318	80	19	527	- [ ] §C5 — Write `src/bakeoff/ledger.py` (`run_record`, `append_run`, `read_ledger`) and
+2026-08-28T10:59:32	plan	claude	commit	45	86350	26	3	409	plan next phase
+2026-08-28T11:45:10	loop	qwen	commit	77	13841	31	6	2785	- [ ] §D1 — Add `check_freeze(bar, lock)` to `src/bakeoff/freeze.py`, returning a
