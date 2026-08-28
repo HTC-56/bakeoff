@@ -20,6 +20,7 @@ dev = [
     # Type stubs only. PyYAML ships no py.typed, and mypy --strict is never weakened
     # to pass a gate; this is a dev-group stub package, not a runtime dependency.
     "types-PyYAML>=6.0",
+    "types-jsonschema>=4.21",
 ]
 
 [build-system]
