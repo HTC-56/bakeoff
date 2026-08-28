@@ -52,3 +52,25 @@ def grade_exact(completion: str, expected: str, *, strip: bool = True) -> GradeR
     if got == want:
         return _binary(True, "exact match")
     return _binary(False, f"expected {want!r}, got {got!r}")
+
+
+def grade_contains(
+    completion: str,
+    substring: str,
+    *,
+    case_sensitive: bool = True,
+) -> GradeResult:
+    """Pass when ``substring`` appears anywhere in ``completion``.
+
+    When ``case_sensitive`` is ``False`` both sides are lower-cased before the
+    search.  The failure ``detail`` names the missing substring.
+    """
+    if case_sensitive:
+        needle = substring
+        haystack = completion
+    else:
+        needle = substring.lower()
+        haystack = completion.lower()
+    if needle in haystack:
+        return _binary(True, f"contains {substring!r}")
+    return _binary(False, f"missing {substring!r}")

@@ -13,7 +13,7 @@ The foundation is already committed (`feat(A0)`: toolchain, `graders.py` with
 **§A0 in TASK_PHASE_A.md first** — it holds the gate command and the typing rules
 every task below assumes. Then grep your own section and build it.
 
-- [ ] §A1 — Add `grade_contains` to `src/bakeoff/graders.py`, mirroring `grade_exact`;
+- [x] §A1 — Add `grade_contains` to `src/bakeoff/graders.py`, mirroring `grade_exact`;
   new `TestGradeContains` in `tests/test_graders.py`. Gate: §A0's five commands.
 - [ ] §A2 — Add `grade_regex` to `src/bakeoff/graders.py`; a pattern that will not
   compile raises `GraderConfigError`. Tests in `tests/test_graders.py`. Gate: §A0.

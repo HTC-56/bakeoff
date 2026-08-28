@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bakeoff.graders import GradeResult, grade_exact
+from bakeoff.graders import GradeResult, grade_contains, grade_exact
 
 
 class TestGradeExact:
@@ -27,3 +27,27 @@ class TestGradeExact:
     def test_result_is_frozen(self) -> None:
         result: GradeResult = grade_exact("4", "4")
         assert isinstance(result, GradeResult)
+
+
+class TestGradeContains:
+    def test_substring_in_middle_passes_with_score_one(self) -> None:
+        result = grade_contains("the answer is 42", "42")
+        assert result.passed is True
+        assert result.score == 1.0
+
+    def test_absent_substring_fails_with_score_zero(self) -> None:
+        result = grade_contains("the answer is 42", "99")
+        assert result.passed is False
+        assert result.score == 0.0
+
+    def test_case_difference_fails_when_case_sensitive(self) -> None:
+        result = grade_contains("hello", "HELLO")
+        assert result.passed is False
+
+    def test_case_difference_passes_when_case_insensitive(self) -> None:
+        result = grade_contains("hello", "HELLO", case_sensitive=False)
+        assert result.passed is True
+
+    def test_failure_detail_mentions_missing_substring(self) -> None:
+        result = grade_contains("the answer is 42", "missing")
+        assert "missing" in result.detail
