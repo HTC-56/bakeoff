@@ -97,7 +97,7 @@ typing rules, and an index of what D0 gives you. Then grep your own section and 
 - [x] §D4 — Give `run_record` in `src/bakeoff/ledger.py` a `freeze` argument and a
   `"freeze"` key, so a run records the bar hash it ran under. `TestRunRecordFreeze` in
   `tests/test_ledger.py`. Gate: §D0.
-- [ ] |- §D5 — Prove REBARRED on disk: `TestRebarredEndToEnd` in `tests/test_freeze.py`
+- [x] |- §D5 — Prove REBARRED on disk: `TestRebarredEndToEnd` in `tests/test_freeze.py`
   freezes a copy of the example manifest, lowers its bar, and asserts the check and the
   gate both catch it. Tests only. Gate: §D0.
 - [ ] |- §D6 — Run `bash verify.sh`, then append a Phase D section to `STATUS.md` and

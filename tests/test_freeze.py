@@ -32,7 +32,7 @@ from bakeoff.freeze import (
     require_freeze,
     write_lockfile,
 )
-from bakeoff.manifest import Bar, Manifest, parse_manifest
+from bakeoff.manifest import Bar, Manifest, load_manifest, parse_manifest
 
 # --- helpers ----------------------------------------------------------------
 
@@ -344,3 +344,57 @@ class TestRequireFreeze:
             frozen_hash="sha256:ccc" + "d" * 61,
         )
         require_freeze(check, rebar=True)
+
+
+class TestRebarredEndToEnd:
+    """Prove REBARRED on disk: freeze a copy of the example manifest, lower its bar,
+    and assert the check and the gate both catch it.
+
+    Tests only — no source changes.
+    """
+
+    def test_frozen_then_lowered_bar_is_rebarred(self, tmp_path: Path) -> None:
+        # Copy the example manifest text onto tmp_path.
+        example_manifest = (
+            Path(__file__).resolve().parent.parent / "examples" / "quickstart" / "audition.yaml"
+        )
+        manifest_path = tmp_path / "audition.yaml"
+        manifest_path.write_text(example_manifest.read_text())
+
+        # Load, freeze, and grab the lockfile.
+        manifest = load_manifest(manifest_path)
+        lock = freeze_bar(manifest, manifest_path=manifest_path)
+        lock_path = lockfile_path(manifest_path)
+        write_lockfile(lock_path, lock)
+
+        # 1. Straight after freezing: FROZEN, require_freeze(rebar=False) passes.
+        check = check_freeze(manifest.bar, read_lockfile(lock_path))
+        assert check.status == FreezeStatus.FROZEN
+        require_freeze(check, rebar=False)
+
+        # 2. Lower the bar: rewrite min_pass_rate: 0.8 → min_pass_rate: 0.5.
+        edited = manifest_path.read_text().replace("min_pass_rate: 0.8", "min_pass_rate: 0.5", 1)
+        manifest_path.write_text(edited)
+        edited_manifest = load_manifest(manifest_path)
+
+        rebarred_check = check_freeze(edited_manifest.bar, read_lockfile(lock_path))
+        assert rebarred_check.status == FreezeStatus.REBARRED
+
+        # 3. frozen_hash == hash in lockfile; current_hash == hash of lowered bar.
+        lock = read_lockfile(lock_path)
+        assert rebarred_check.frozen_hash == lock.bar_hash
+        assert rebarred_check.current_hash == bar_hash(edited_manifest.bar)
+        assert rebarred_check.frozen_hash is not None
+        assert rebarred_check.current_hash is not None
+        assert rebarred_check.frozen_hash != rebarred_check.current_hash
+
+        # 4. require_freeze(rebar=False) raises; rebar=True passes.
+        with pytest.raises(FreezeError):
+            require_freeze(rebarred_check, rebar=False)
+        require_freeze(rebarred_check, rebar=True)
+
+        # 5. Re-freeze the edited manifest — back to FROZEN.
+        new_lock = freeze_bar(edited_manifest, manifest_path=manifest_path)
+        write_lockfile(lock_path, new_lock)
+        fresh_check = check_freeze(edited_manifest.bar, read_lockfile(lock_path))
+        assert fresh_check.status == FreezeStatus.FROZEN
