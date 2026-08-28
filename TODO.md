@@ -100,6 +100,6 @@ typing rules, and an index of what D0 gives you. Then grep your own section and 
 - [x] |- §D5 — Prove REBARRED on disk: `TestRebarredEndToEnd` in `tests/test_freeze.py`
   freezes a copy of the example manifest, lowers its bar, and asserts the check and the
   gate both catch it. Tests only. Gate: §D0.
-- [ ] |- §D6 — Run `bash verify.sh`, then append a Phase D section to `STATUS.md` and
+- [x] |- §D6 — Run `bash verify.sh`, then append a Phase D section to `STATUS.md` and
   update rows 4 and 9 plus the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh`
   green.

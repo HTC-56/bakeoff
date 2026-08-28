@@ -33,3 +33,11 @@ error outcomes), the malformed stub reply, `summarize`, `judge`, and `exit_code`
 `scoring.py`, the JSONL run ledger (`ledger.py`), and end-to-end proofs against the
 bundled stub. Still missing: the freeze/lockfile and REBARRED mechanic, the report,
 the CLI, `docs/PROCESS.md`.
+
+## Phase D
+
+Phase D shipped the freeze module (`freeze.py`: bar hashing, `Lockfile` model, read/write,
+`FreezeStatus`/`FreezeCheck` shapes), the freeze check (`check_freeze`), its run gate
+(`require_freeze` with `--rebar`), the quickstart lockfile (`audition.lock`), the bar hash
+recorded in the ledger per run, and a REBARRED end-to-end proof in
+`TestRebarredEndToEnd`. Still missing: the report, the CLI, `docs/PROCESS.md`.

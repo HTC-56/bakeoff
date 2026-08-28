@@ -8,12 +8,12 @@ are the one permitted exception to append-only docs.
 | 1 | Audition manifest (YAML, pydantic-validated) | SHIPPED | B | |
 | 2 | Task suites as files | SHIPPED | B | |
 | 3 | Pure graders (exact, contains, regex, json-schema, numeric-tolerance) | SHIPPED | B | all five shipped; run_grader dispatches a case spec to its grader |
-| 4 | Pre-registered bar + freeze/REBARRED mechanic | PARTIAL | D | bar model and per-pair thresholds shipped in B; bar hashing, the lockfile and the three freeze states shipped in D0; the freeze check, the `--rebar` gate and the quickstart lockfile are the rest of D |
+| 4 | Pre-registered bar + freeze/REBARRED mechanic | SHIPPED | D | bar model and per-pair thresholds shipped in B; bar hashing, the lockfile and the three freeze states shipped in D0; the freeze check, the `--rebar` gate and the quickstart lockfile shipped in D1–D3; REBARRED end-to-end proof in D5; the report's REBARRED branding lands with the report |
 | 5 | Runner (async httpx, retries, concurrency, usage capture) | SHIPPED | C | `runner.py` shipped in C0; stub-backed end-to-end proof is §C4; JSONL ledger is §C5 |
 | 6 | Report (self-contained HTML + results.json + exit code) | NOT BUILT | — | hero screenshot; its scoring input (`scoring.py`, exit code) lands in C |
 | 7 | CLI (init, validate, freeze, run, report) | NOT BUILT | — | |
 | 8 | Bundled stub OpenAI-compatible server | SHIPPED | A |
-| 9 | Deploy-grade packaging (pyproject, CI, quickstart, ledger) | PARTIAL | C | pyproject, CI, scrub-check, verify.sh, README shipped; JSONL ledger shipped in C; README quickstart and docs/PROCESS.md are what is left |
+| 9 | Deploy-grade packaging (pyproject, CI, quickstart, ledger) | PARTIAL | C | pyproject, CI, scrub-check, verify.sh, README shipped; JSONL ledger shipped in C with bar hash per run; README quickstart and docs/PROCESS.md are what is left |
 | — | docs/PROCESS.md (the loop story) | NOT BUILT | — | written near the end, when there is a ledger to excerpt |
 
 When every row reads SHIPPED and verify.sh is green, the project is done — the
@@ -39,3 +39,5 @@ planning lane declares PROJECT SPEC COMPLETE rather than inventing scope.
   threshold must (§D0).
 - The lockfile is YAML and hand-editable on purpose — the hash is the check, so a
   doctored lockfile simply reads as REBARRED (§D0).
+- The `--rebar` flag is the CLI's (§D2); `require_freeze` is the gate the CLI will call.
+- The report's REBARRED branding is the report phase's work (§D5).
