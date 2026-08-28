@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from bakeoff.freeze import FreezeStatus, check_freeze, find_lockfile
 from bakeoff.manifest import load_audition
 from bakeoff.stub import canned_reply
 from bakeoff.suite import run_grader
@@ -44,3 +45,27 @@ class TestQuickstart:
         audition = load_audition(AUDITION_PATH)
         candidate = audition.manifest.candidates[0]
         assert candidate.base_url.startswith("http://localhost")
+
+
+class TestQuickstartFreeze:
+    """Assert the shipped lockfile exists and matches the shipped bar."""
+
+    def test_lockfile_exists(self) -> None:
+        assert find_lockfile(AUDITION_PATH) is not None
+
+    def test_bar_matches_lockfile(self) -> None:
+        lock = find_lockfile(AUDITION_PATH)
+        assert lock is not None
+        audition = load_audition(AUDITION_PATH)
+        check = check_freeze(audition.manifest.bar, lock)
+        assert check.status == FreezeStatus.FROZEN
+
+    def test_lockfile_manifest_is_name_not_path(self) -> None:
+        lock = find_lockfile(AUDITION_PATH)
+        assert lock is not None
+        assert lock.manifest == "audition.yaml"
+
+    def test_lockfile_bar_hash_starts_with_sha256(self) -> None:
+        lock = find_lockfile(AUDITION_PATH)
+        assert lock is not None
+        assert lock.bar_hash.startswith("sha256:")

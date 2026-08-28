@@ -91,7 +91,7 @@ typing rules, and an index of what D0 gives you. Then grep your own section and 
 - [x] §D2 — Add `require_freeze(check, *, rebar)` to `src/bakeoff/freeze.py`: raises
   `FreezeError` unless the run may proceed. `TestRequireFreeze` in
   `tests/test_freeze.py`. Gate: §D0.
-- [ ] §D3 — Generate `examples/quickstart/audition.lock` with the command in §D3 and
+- [x] §D3 — Generate `examples/quickstart/audition.lock` with the command in §D3 and
   commit it; `TestQuickstartFreeze` in `tests/test_examples.py` asserts the shipped
   lockfile still matches the shipped bar. Gate: §D0.
 - [ ] §D4 — Give `run_record` in `src/bakeoff/ledger.py` a `freeze` argument and a

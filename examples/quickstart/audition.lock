@@ -1,0 +1,7 @@
+# bakeoff lockfile — the pre-registered bar, hashed.
+# Written by `bakeoff freeze`; commit it. A run whose bar no longer hashes to
+# bar_hash below needs --rebar, and its report is branded REBARRED.
+bar_hash: sha256:fb82a24ec3093f1ed0c738d781d11c331843c499b37435f172bb5d7460919e72
+frozen_at: '2026-08-28T17:05:05+00:00'
+manifest: audition.yaml
+version: 1
