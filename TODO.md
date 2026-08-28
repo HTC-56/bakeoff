@@ -24,6 +24,6 @@ every task below assumes. Then grep your own section and build it.
   Gate: §A0.
 - [x] §A5 — Write `README.md` (what bakeoff is, honest status, uv setup, gates, running
   the stub) and add `readme = "README.md"` to `pyproject.toml`. Gate: §A0.
-- [ ] §A6 — Write `verify.sh` composing the five gates, run it, then append a Phase A
+- [x] |- §A6 — Write `verify.sh` composing the five gates, run it, then append a Phase A
   section to `STATUS.md` and update rows 3, 5, 8, 9 plus the reservations ledger in
   `ROADMAP.md`. Gate: `bash verify.sh` green.

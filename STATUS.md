@@ -8,3 +8,11 @@ end-to-end before anything else is built; this is the executor's first
 Python repo).
 
 Per-phase sections append below as phases ship.
+
+## Phase A
+
+Phase A shipped the toolchain (uv, ruff, mypy --strict, pytest), four graders
+(`grade_exact`, `grade_contains`, `grade_regex`, `grade_numeric_tolerance`), the
+HTTP seam in the bundled stub server (including the `error_status` switch),
+`scrub-check.sh`, CI, `README.md`, and `verify.sh`. Still missing: the audition
+manifest, the bar and freeze mechanic, the runner, the report, the CLI.
