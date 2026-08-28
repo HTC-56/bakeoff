@@ -19,7 +19,7 @@ every task below assumes. Then grep your own section and build it.
   compile raises `GraderConfigError`. Tests in `tests/test_graders.py`. Gate: §A0.
 - [x] §A3 — Add `grade_numeric_tolerance` to `src/bakeoff/graders.py`; non-numeric
   completion fails, negative tolerance raises. Tests in `tests/test_graders.py`. Gate: §A0.
-- [ ] §A4 — Add `error_status` to `src/bakeoff/stub.py` and wire it into `do_POST` so a
+- [x] §A4 — Add `error_status` to `src/bakeoff/stub.py` and wire it into `do_POST` so a
   `status:503:` prompt returns that HTTP code. Tests in `tests/test_stub_end_to_end.py`.
   Gate: §A0.
 - [ ] §A5 — Write `README.md` (what bakeoff is, honest status, uv setup, gates, running

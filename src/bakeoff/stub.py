@@ -49,6 +49,23 @@ def canned_reply(prompt: str) -> str:
     return DEFAULT_REPLY
 
 
+def error_status(prompt: str) -> int | None:
+    """Return an HTTP status code when the prompt carries a ``status:<NNN>:`` prefix.
+
+    The stripped prompt must start with ``status:``, followed by exactly three
+    digits, then a colon (e.g. ``status:503: anything``).  Returns the integer
+    status code, or ``None`` when the prefix is absent or malformed.
+    """
+
+    text = prompt.strip()
+    if not text.startswith("status:"):
+        return None
+    rest = text[len("status:") :]
+    if len(rest) < 4 or not rest[:3].isdigit() or rest[3] != ":":
+        return None
+    return int(rest[:3])
+
+
 def count_tokens(text: str) -> int:
     """This stub's token model: one token per whitespace-separated word. Deterministic."""
     return len(text.split())
@@ -129,6 +146,13 @@ class StubHandler(BaseHTTPRequestHandler):
             return
         if not isinstance(decoded, dict):
             self._send_json(400, {"error": {"message": "request body is not an object"}})
+            return
+        err_code = error_status(last_user_prompt(decoded))
+        if err_code is not None:
+            self._send_json(
+                err_code,
+                {"error": {"message": f"stub error {err_code}"}},
+            )
             return
         self._send_json(200, build_response(decoded))
 

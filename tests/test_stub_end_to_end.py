@@ -12,7 +12,7 @@ import httpx
 
 from bakeoff.client import ClientError, Completion, build_payload, chat_completion
 from bakeoff.graders import grade_exact
-from bakeoff.stub import DEFAULT_REPLY, build_response, canned_reply, run_stub
+from bakeoff.stub import DEFAULT_REPLY, build_response, canned_reply, error_status, run_stub
 
 
 def ask(base_url: str, prompt: str, model: str = "stub-model") -> Completion:
@@ -78,3 +78,23 @@ class TestEndToEnd:
                 assert "404" in str(exc)
             else:  # pragma: no cover - the stub must 404 unknown paths
                 raise AssertionError("expected a ClientError for an unknown path")
+
+
+class TestErrorStatus:
+    def test_valid_status_prefix_returns_code(self) -> None:
+        assert error_status("status:503: overloaded") == 503
+
+    def test_ordinary_prompt_returns_none(self) -> None:
+        assert error_status("what is 2 + 2?") is None
+
+    def test_malformed_prefix_returns_none(self) -> None:
+        assert error_status("status:abc: x") is None
+
+    def test_error_status_returns_code_end_to_end(self) -> None:
+        with run_stub() as base_url:
+            try:
+                ask(base_url, "status:500: server error")
+            except ClientError as exc:
+                assert "500" in str(exc)
+            else:  # pragma: no cover
+                raise AssertionError("expected a ClientError for a 500 status")
