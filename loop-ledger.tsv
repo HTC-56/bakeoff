@@ -7,3 +7,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T08:05:30	loop	qwen	commit	133	20182	52	16	545	- [ ] §A6 — Write `verify.sh` composing the five gates, run it, then append a Phase A
 2026-08-28T08:16:40	plan	claude	commit	58	93222	33	0	518	plan next phase
 2026-08-28T08:17:44	loop	qwen	commit	54	8191	21	10	116	- [ ] §B1 — Add `grade_json_schema` to `src/bakeoff/graders.py`, mirroring
+2026-08-28T08:20:07	loop	qwen	commit	107	16776	43	17	142	- [ ] §B2 — Add `run_grader(spec, completion)` to `src/bakeoff/suite.py`: one
