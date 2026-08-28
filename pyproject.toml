@@ -1,0 +1,43 @@
+[project]
+name = "bakeoff"
+version = "0.1.0"
+description = "Model selection by pre-registered audition, not vibes."
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.1",
+    "httpx>=0.27",
+    "jsonschema>=4.21",
+    "pydantic>=2.6",
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11",
+    "pytest>=8.2",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/bakeoff"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
