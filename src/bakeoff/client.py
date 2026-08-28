@@ -9,10 +9,21 @@ points it at a real OpenAI-compatible endpoint. Nothing else in the package impo
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Any
 
 import httpx
+
+DEFAULT_TIMEOUT_S = 60.0
+
+type HttpClient = httpx.AsyncClient
+"""The connection-pool type callers pass around.
+
+Exported so the runner can annotate a client without importing ``httpx`` itself —
+this module stays the only importer of the HTTP library.
+"""
 
 
 class ClientError(RuntimeError):
@@ -106,7 +117,7 @@ def build_payload(
 
 
 async def chat_completion(
-    client: httpx.AsyncClient,
+    client: HttpClient,
     base_url: str,
     model: str,
     prompt: str,
@@ -114,7 +125,7 @@ async def chat_completion(
     system: str | None = None,
     temperature: float = 0.0,
     max_tokens: int | None = None,
-    timeout: float = 60.0,
+    timeout: float = DEFAULT_TIMEOUT_S,
 ) -> Completion:
     """POST one chat completion and parse the reply.
 
@@ -137,3 +148,14 @@ async def chat_completion(
     except ValueError as exc:
         raise ClientError(f"{url} returned a body that is not JSON") from exc
     return _parse_completion(decoded)
+
+
+@asynccontextmanager
+async def open_client(*, timeout: float = DEFAULT_TIMEOUT_S) -> AsyncIterator[HttpClient]:
+    """Open the one pooled client an audition uses, and close it on the way out.
+
+    Callers that already have a client (tests, a long-lived CLI process) pass theirs
+    instead; this is the seam's own constructor so nothing else has to name ``httpx``.
+    """
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        yield client
