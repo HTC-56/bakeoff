@@ -94,7 +94,7 @@ typing rules, and an index of what D0 gives you. Then grep your own section and 
 - [x] §D3 — Generate `examples/quickstart/audition.lock` with the command in §D3 and
   commit it; `TestQuickstartFreeze` in `tests/test_examples.py` asserts the shipped
   lockfile still matches the shipped bar. Gate: §D0.
-- [ ] §D4 — Give `run_record` in `src/bakeoff/ledger.py` a `freeze` argument and a
+- [x] §D4 — Give `run_record` in `src/bakeoff/ledger.py` a `freeze` argument and a
   `"freeze"` key, so a run records the bar hash it ran under. `TestRunRecordFreeze` in
   `tests/test_ledger.py`. Gate: §D0.
 - [ ] |- §D5 — Prove REBARRED on disk: `TestRebarredEndToEnd` in `tests/test_freeze.py`

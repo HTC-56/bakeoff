@@ -2,6 +2,7 @@
 
 Append forever so a repo accumulates a history of what each model scored.
 Nothing calls this module yet — the CLI wires it up in a later phase.
+Each record carries the freeze state (bar-hash check) the run was made under.
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+from .freeze import FreezeCheck
 from .runner import RunResults
 from .scoring import PairVerdict
 
@@ -23,12 +25,14 @@ def run_record(
     verdicts: Sequence[PairVerdict],
     *,
     manifest: str,
+    freeze: FreezeCheck | None = None,
 ) -> dict[str, Any]:
     """A JSON-safe dict for one audition run.
 
     Holds ``started_at``, ``finished_at``, ``manifest``, ``cases``,
-    ``met_bar``, and ``pairs`` — one entry per verdict with the
-    summary's fields plus ``met`` and ``reasons``.
+    ``met_bar``, ``pairs``, and ``freeze`` — one entry per verdict with the
+    summary's fields plus ``met`` and ``reasons``.  The ``freeze`` key records
+    the bar-hash check state for this run.
     """
     pairs: list[dict[str, Any]] = []
     for v in verdicts:
@@ -39,6 +43,14 @@ def run_record(
 
     met_bar = all(v.met for v in verdicts)
 
+    freeze_record: dict[str, Any] | None = None
+    if freeze is not None:
+        freeze_record = {
+            "status": freeze.status.value,
+            "bar_hash": freeze.current_hash,
+            "frozen_hash": freeze.frozen_hash,
+        }
+
     return {
         "started_at": results.started_at,
         "finished_at": results.finished_at,
@@ -46,6 +58,7 @@ def run_record(
         "cases": len(results.outcomes),
         "met_bar": met_bar,
         "pairs": pairs,
+        "freeze": freeze_record,
     }
 
 

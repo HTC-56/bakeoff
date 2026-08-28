@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from bakeoff.freeze import FreezeCheck, FreezeStatus
 from bakeoff.ledger import append_run, read_ledger, run_record
 from bakeoff.manifest import Thresholds
 from bakeoff.runner import CaseOutcome, RunResults
@@ -136,4 +137,56 @@ class TestRunRecord:
         verdicts = [_verdict(met=False)]
         record = run_record(results, verdicts, manifest="test.yaml")
         # Must not raise — every value is JSON-safe
+        json.dumps(record, sort_keys=True)
+
+
+class TestRunRecordFreeze:
+    def test_no_freeze_argument_gives_none(self) -> None:
+        results = _run_results()
+        verdicts = [_verdict()]
+        record = run_record(results, verdicts, manifest="test.yaml")
+        assert record["freeze"] is None
+        # Other keys still present
+        assert "started_at" in record
+        assert "manifest" in record
+        assert "cases" in record
+        assert "met_bar" in record
+        assert "pairs" in record
+
+    def test_frozen_check_records_status_and_bar_hash(self) -> None:
+        results = _run_results()
+        verdicts = [_verdict()]
+        check = FreezeCheck(
+            status=FreezeStatus.FROZEN,
+            current_hash="abc123",
+            frozen_hash="abc123",
+        )
+        record = run_record(results, verdicts, manifest="test.yaml", freeze=check)
+        assert record["freeze"]["status"] == "frozen"
+        assert record["freeze"]["bar_hash"] == "abc123"
+        assert record["freeze"]["frozen_hash"] == "abc123"
+
+    def test_rebarred_check_records_two_different_hashes(self) -> None:
+        results = _run_results()
+        verdicts = [_verdict()]
+        check = FreezeCheck(
+            status=FreezeStatus.REBARRED,
+            current_hash="current",
+            frozen_hash="frozen",
+        )
+        record = run_record(results, verdicts, manifest="test.yaml", freeze=check)
+        assert record["freeze"]["status"] == "rebarred"
+        assert record["freeze"]["bar_hash"] == "current"
+        assert record["freeze"]["frozen_hash"] == "frozen"
+
+    def test_record_survives_json_dumps(self) -> None:
+        results = _run_results()
+        verdicts = [_verdict()]
+        check = FreezeCheck(
+            status=FreezeStatus.FROZEN,
+            current_hash="abc",
+            frozen_hash="abc",
+        )
+        record = run_record(results, verdicts, manifest="test.yaml", freeze=check)
+        # Must not raise — enum .value is a str, not the enum itself
         json.dumps(record, sort_keys=True)
