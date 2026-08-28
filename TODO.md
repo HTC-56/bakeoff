@@ -77,3 +77,29 @@ grep your own section and build it.
   `tests/test_ledger.py`. One JSON object per line, one line per run. Gate: §C0.
 - [x] |- §C6 — Run `bash verify.sh`, then append a Phase C section to `STATUS.md` and update
   row 5, row 9 and the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh` green.
+
+## Phase D: the freeze — see TASK_PHASE_D.md
+
+The hard module is already committed (`feat(D0)`): `src/bakeoff/freeze.py` (bar hashing,
+the `Lockfile` model, read/write, and the `FreezeStatus`/`FreezeCheck` shapes) plus
+`tests/test_freeze.py` and its helpers. Read **§D0 in TASK_PHASE_D.md first** — gate,
+typing rules, and an index of what D0 gives you. Then grep your own section and build it.
+
+- [ ] §D1 — Add `check_freeze(bar, lock)` to `src/bakeoff/freeze.py`, returning a
+  `FreezeCheck` with one of the three statuses; `TestCheckFreeze` in
+  `tests/test_freeze.py`. Gate: §D0's five commands.
+- [ ] §D2 — Add `require_freeze(check, *, rebar)` to `src/bakeoff/freeze.py`: raises
+  `FreezeError` unless the run may proceed. `TestRequireFreeze` in
+  `tests/test_freeze.py`. Gate: §D0.
+- [ ] §D3 — Generate `examples/quickstart/audition.lock` with the command in §D3 and
+  commit it; `TestQuickstartFreeze` in `tests/test_examples.py` asserts the shipped
+  lockfile still matches the shipped bar. Gate: §D0.
+- [ ] §D4 — Give `run_record` in `src/bakeoff/ledger.py` a `freeze` argument and a
+  `"freeze"` key, so a run records the bar hash it ran under. `TestRunRecordFreeze` in
+  `tests/test_ledger.py`. Gate: §D0.
+- [ ] |- §D5 — Prove REBARRED on disk: `TestRebarredEndToEnd` in `tests/test_freeze.py`
+  freezes a copy of the example manifest, lowers its bar, and asserts the check and the
+  gate both catch it. Tests only. Gate: §D0.
+- [ ] |- §D6 — Run `bash verify.sh`, then append a Phase D section to `STATUS.md` and
+  update rows 4 and 9 plus the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh`
+  green.

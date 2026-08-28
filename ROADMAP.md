@@ -8,7 +8,7 @@ are the one permitted exception to append-only docs.
 | 1 | Audition manifest (YAML, pydantic-validated) | SHIPPED | B | |
 | 2 | Task suites as files | SHIPPED | B | |
 | 3 | Pure graders (exact, contains, regex, json-schema, numeric-tolerance) | SHIPPED | B | all five shipped; run_grader dispatches a case spec to its grader |
-| 4 | Pre-registered bar + freeze/REBARRED mechanic | NOT BUILT | B | bar model and per-pair thresholds shipped in B; freeze, lockfile and REBARRED pending |
+| 4 | Pre-registered bar + freeze/REBARRED mechanic | PARTIAL | D | bar model and per-pair thresholds shipped in B; bar hashing, the lockfile and the three freeze states shipped in D0; the freeze check, the `--rebar` gate and the quickstart lockfile are the rest of D |
 | 5 | Runner (async httpx, retries, concurrency, usage capture) | SHIPPED | C | `runner.py` shipped in C0; stub-backed end-to-end proof is §C4; JSONL ledger is §C5 |
 | 6 | Report (self-contained HTML + results.json + exit code) | NOT BUILT | — | hero screenshot; its scoring input (`scoring.py`, exit code) lands in C |
 | 7 | CLI (init, validate, freeze, run, report) | NOT BUILT | — | |
@@ -34,3 +34,8 @@ planning lane declares PROJECT SPEC COMPLETE rather than inventing scope.
   is a latency the audition really measured (§C0).
 - The run ledger is written but nothing calls it yet; the CLI's `run` command wires it
   up in a later phase (§C5).
+- The freeze hashes the *bar alone*, not the whole manifest: adding a candidate or a
+  case is ordinary work and must not invalidate a pre-registration, while moving a
+  threshold must (§D0).
+- The lockfile is YAML and hand-editable on purpose — the hash is the check, so a
+  doctored lockfile simply reads as REBARRED (§D0).
