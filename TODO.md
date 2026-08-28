@@ -88,7 +88,7 @@ typing rules, and an index of what D0 gives you. Then grep your own section and 
 - [x] §D1 — Add `check_freeze(bar, lock)` to `src/bakeoff/freeze.py`, returning a
   `FreezeCheck` with one of the three statuses; `TestCheckFreeze` in
   `tests/test_freeze.py`. Gate: §D0's five commands.
-- [ ] §D2 — Add `require_freeze(check, *, rebar)` to `src/bakeoff/freeze.py`: raises
+- [x] §D2 — Add `require_freeze(check, *, rebar)` to `src/bakeoff/freeze.py`: raises
   `FreezeError` unless the run may proceed. `TestRequireFreeze` in
   `tests/test_freeze.py`. Gate: §D0.
 - [ ] §D3 — Generate `examples/quickstart/audition.lock` with the command in §D3 and

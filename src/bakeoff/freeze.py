@@ -237,3 +237,22 @@ def check_freeze(bar: Bar, lock: Lockfile | None) -> FreezeCheck:
         current_hash=current,
         frozen_hash=lock.bar_hash,
     )
+
+
+def require_freeze(check: FreezeCheck, *, rebar: bool) -> None:
+    """Raise :exc:`FreezeError` when this run may not proceed.
+
+    A **FROZEN** bar is always allowed — ``--rebar`` is permission, not a mode.
+    **UNFROZEN** runs are blocked until the user pre-registers a bar.
+    **REBARRED** runs are blocked unless the caller explicitly passes ``rebar``.
+    """
+    if check.status == FreezeStatus.FROZEN:
+        return
+    if check.status == FreezeStatus.UNFROZEN:
+        raise FreezeError("the bar has not been pre-registered — run bakeoff freeze first")
+    # REBARRED
+    if not rebar:
+        raise FreezeError(
+            f"bar rebars since freeze — frozen: {check.frozen_hash}, "
+            f"current: {check.current_hash}; pass --rebar to proceed"
+        )

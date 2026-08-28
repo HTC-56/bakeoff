@@ -18,6 +18,7 @@ import pytest
 from bakeoff.freeze import (
     HASH_PREFIX,
     LOCKFILE_VERSION,
+    FreezeCheck,
     FreezeError,
     FreezeStatus,
     Lockfile,
@@ -28,6 +29,7 @@ from bakeoff.freeze import (
     freeze_bar,
     lockfile_path,
     read_lockfile,
+    require_freeze,
     write_lockfile,
 )
 from bakeoff.manifest import Bar, Manifest, parse_manifest
@@ -293,3 +295,52 @@ class TestCheckFreeze:
         check = check_freeze(different_bar, lock)
         assert check.status == FreezeStatus.REBARRED
         assert check.frozen_hash == lock.bar_hash
+
+
+class TestRequireFreeze:
+    def test_frozen_with_rebar_false_returns_none(self) -> None:
+        bar = make_bar()
+        check = FreezeCheck(
+            status=FreezeStatus.FROZEN,
+            current_hash=bar_hash(bar),
+            frozen_hash=bar_hash(bar),
+        )
+        require_freeze(check, rebar=False)
+
+    def test_frozen_with_rebar_true_returns_none(self) -> None:
+        bar = make_bar()
+        check = FreezeCheck(
+            status=FreezeStatus.FROZEN,
+            current_hash=bar_hash(bar),
+            frozen_hash=bar_hash(bar),
+        )
+        require_freeze(check, rebar=True)
+
+    def test_unfrozen_raises_freeze_error(self) -> None:
+        check = FreezeCheck(
+            status=FreezeStatus.UNFROZEN,
+            current_hash=bar_hash(make_bar()),
+            frozen_hash=None,
+        )
+        with pytest.raises(FreezeError, match="bakeoff freeze"):
+            require_freeze(check, rebar=False)
+
+    def test_rebarred_without_rebar_raises_and_shows_both_hashes(self) -> None:
+        check = FreezeCheck(
+            status=FreezeStatus.REBARRED,
+            current_hash="sha256:aaa" + "b" * 61,
+            frozen_hash="sha256:ccc" + "d" * 61,
+        )
+        with pytest.raises(FreezeError) as excinfo:
+            require_freeze(check, rebar=False)
+        msg = str(excinfo.value)
+        assert "sha256:ccc" + "d" * 61 in msg
+        assert "sha256:aaa" + "b" * 61 in msg
+
+    def test_rebarred_with_rebar_true_returns_none(self) -> None:
+        check = FreezeCheck(
+            status=FreezeStatus.REBARRED,
+            current_hash="sha256:aaa" + "b" * 61,
+            frozen_hash="sha256:ccc" + "d" * 61,
+        )
+        require_freeze(check, rebar=True)
