@@ -13,3 +13,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T09:18:40	loop	qwen	commit	234	54117	92	22	2544	- [ ] §B5 — Assert the validation promise: `TestManifestErrors` in
 2026-08-28T09:36:42	plan	claude	commit	51	94526	30	5	517	plan next phase
 2026-08-28T09:57:56	loop	qwen	commit	60	10017	25	5	1310	- [ ] §C1 — Add `malformed_reply` to `src/bakeoff/stub.py` and wire it into `do_POST`, so a
+2026-08-28T10:22:05	loop	qwen	commit	126	20371	53	12	1447	- [ ] §C2 — Add `summarize(outcomes)` to `src/bakeoff/scoring.py`: one `PairSummary` per
