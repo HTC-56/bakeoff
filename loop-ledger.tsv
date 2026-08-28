@@ -3,3 +3,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T07:17:10	loop	qwen	commit	37	5551	15	5	95	- [ ] §A1 — Add `grade_contains` to `src/bakeoff/graders.py`, mirroring `grade_exact`;
 2026-08-28T07:27:39	loop	qwen	no-op	86	12188	34	14	627	- [ ] §A2 — Add `grade_regex` to `src/bakeoff/graders.py`; a pattern that will not
 2026-08-28T07:38:18	loop	qwen	commit	90	12747	35	14	637	- [ ] §A3 — Add `grade_numeric_tolerance` to `src/bakeoff/graders.py`; non-numeric
+2026-08-28T07:56:23	loop	qwen	commit	126	17322	48	13	1083	- [ ] §A4 — Add `error_status` to `src/bakeoff/stub.py` and wire it into `do_POST` so a

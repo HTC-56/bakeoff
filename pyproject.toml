@@ -2,6 +2,7 @@
 name = "bakeoff"
 version = "0.1.0"
 description = "Model selection by pre-registered audition, not vibes."
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "click>=8.1",
