@@ -27,3 +27,30 @@ every task below assumes. Then grep your own section and build it.
 - [x] |- §A6 — Write `verify.sh` composing the five gates, run it, then append a Phase A
   section to `STATUS.md` and update rows 3, 5, 8, 9 plus the reservations ledger in
   `ROADMAP.md`. Gate: `bash verify.sh` green.
+
+## Phase B: the audition on disk — see TASK_PHASE_B.md
+
+The two hard modules are already committed (`feat(B0)`): `src/bakeoff/manifest.py`
+(the audition manifest + the bar model) and `src/bakeoff/suite.py` (case files and
+the five grader specs), plus `src/bakeoff/errors.py`. Read **§B0 in TASK_PHASE_B.md
+first** — it holds the gate, the typing rules, and an index of what B0 gives you.
+Then grep your own section and build it.
+
+- [ ] §B1 — Add `grade_json_schema` to `src/bakeoff/graders.py`, mirroring
+  `grade_numeric_tolerance`; a malformed schema raises `GraderConfigError`. Tests in
+  `tests/test_graders.py`. Gate: §B0's five commands.
+- [ ] §B2 — Add `run_grader(spec, completion)` to `src/bakeoff/suite.py`: one
+  `isinstance` branch per grader spec, calling its grader. Tests in
+  `tests/test_suite.py`. Gate: §B0.
+- [ ] §B3 — Add the `Audition` dataclass and `load_audition` to
+  `src/bakeoff/manifest.py`, loading every suite the manifest names. Tests in
+  `tests/test_manifest.py`. Gate: §B0.
+- [ ] §B4 — Write `examples/quickstart/audition.yaml` and five case files under
+  `examples/quickstart/suites/smoke/`, one per grader kind, all passing against the
+  bundled stub. New `tests/test_examples.py`. Gate: §B0.
+- [ ] §B5 — Assert the validation promise: `TestManifestErrors` in
+  `tests/test_manifest.py` and `TestSuiteErrors` in `tests/test_suite.py`. Tests
+  only, no source changes. Gate: §B0.
+- [ ] |- §B6 — Run `bash verify.sh`, then append a Phase B section to `STATUS.md` and
+  update rows 1-4 plus the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh`
+  green.

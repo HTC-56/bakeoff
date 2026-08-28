@@ -5,10 +5,10 @@ are the one permitted exception to append-only docs.
 
 | # | Feature (SPEC.md) | Status | Phase | Note |
 |---|---|---|---|---|
-| 1 | Audition manifest (YAML, pydantic-validated) | NOT BUILT | — | |
-| 2 | Task suites as files | NOT BUILT | — | |
+| 1 | Audition manifest (YAML, pydantic-validated) | PARTIAL | B | models, bar, `load_manifest` shipped; suite join and examples pending |
+| 2 | Task suites as files | PARTIAL | B | case files, grader specs, `load_suite` shipped; grader dispatch and examples pending |
 | 3 | Pure graders (exact, contains, regex, json-schema, numeric-tolerance) | PARTIAL | A | exact, contains, regex, numeric-tolerance shipped; json-schema pending |
-| 4 | Pre-registered bar + freeze/REBARRED mechanic | NOT BUILT | — | centerpiece |
+| 4 | Pre-registered bar + freeze/REBARRED mechanic | NOT BUILT | B | centerpiece; bar model and per-pair thresholds shipped in B, freeze/lockfile/REBARRED pending |
 | 5 | Runner (async httpx, retries, concurrency, usage capture) | NOT BUILT | A | client seam shipped in A; runner itself pending |
 | 6 | Report (self-contained HTML + results.json + exit code) | NOT BUILT | — | hero screenshot |
 | 7 | CLI (init, validate, freeze, run, report) | NOT BUILT | — | |
