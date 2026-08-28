@@ -11,3 +11,5 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T08:23:40	loop	qwen	commit	157	22927	61	20	212	- [ ] §B3 — Add the `Audition` dataclass and `load_audition` to
 2026-08-28T08:36:14	loop	qwen	commit	179	29827	70	21	752	- [ ] §B4 — Write `examples/quickstart/audition.yaml` and five case files under
 2026-08-28T09:18:40	loop	qwen	commit	234	54117	92	22	2544	- [ ] §B5 — Assert the validation promise: `TestManifestErrors` in
+2026-08-28T09:36:42	plan	claude	commit	51	94526	30	5	517	plan next phase
+2026-08-28T09:57:56	loop	qwen	commit	60	10017	25	5	1310	- [ ] §C1 — Add `malformed_reply` to `src/bakeoff/stub.py` and wire it into `do_POST`, so a
