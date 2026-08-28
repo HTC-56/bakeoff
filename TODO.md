@@ -39,7 +39,7 @@ Then grep your own section and build it.
 - [x] §B1 — Add `grade_json_schema` to `src/bakeoff/graders.py`, mirroring
   `grade_numeric_tolerance`; a malformed schema raises `GraderConfigError`. Tests in
   `tests/test_graders.py`. Gate: §B0's five commands.
-- [ ] §B2 — Add `run_grader(spec, completion)` to `src/bakeoff/suite.py`: one
+- [x] §B2 — Add `run_grader(spec, completion)` to `src/bakeoff/suite.py`: one
   `isinstance` branch per grader spec, calling its grader. Tests in
   `tests/test_suite.py`. Gate: §B0.
 - [ ] §B3 — Add the `Audition` dataclass and `load_audition` to

@@ -17,6 +17,7 @@ from bakeoff.suite import (
     Suite,
     load_suite,
     parse_case,
+    run_grader,
 )
 
 EXACT_CASE = """
@@ -112,3 +113,36 @@ class TestGraderSpecs:
         case = self.parse({"kind": "json_schema", "schema": {"type": "object"}})
         assert isinstance(case.grader, JsonSchemaSpec)
         assert case.grader.json_schema == {"type": "object"}
+
+
+class TestRunGrader:
+    def test_exact_spec_passes_on_a_match(self) -> None:
+        spec = ExactSpec(kind="exact", expected="4")
+        result = run_grader(spec, "4")
+        assert result.passed is True
+        assert result.score == 1.0
+
+    def test_contains_spec_passes_case_insensitive(self) -> None:
+        spec = ContainsSpec(kind="contains", substring="Paris", case_sensitive=False)
+        result = run_grader(spec, "the capital is PARIS")
+        assert result.passed is True
+
+    def test_regex_fullmatch_fails_on_partial_match(self) -> None:
+        spec = RegexSpec(kind="regex", pattern=r"\d+", fullmatch=True)
+        result = run_grader(spec, "42 is the answer")
+        assert result.passed is False
+
+    def test_numeric_tolerance_passes_inside_and_fails_outside(self) -> None:
+        inside = NumericToleranceSpec(kind="numeric_tolerance", expected=3.14, tolerance=0.05)
+        assert run_grader(inside, "3.16").passed is True
+
+        outside = NumericToleranceSpec(kind="numeric_tolerance", expected=3.14, tolerance=0.05)
+        assert run_grader(outside, "3.5").passed is False
+
+    def test_json_schema_spec_passes_valid_and_fails_invalid(self) -> None:
+        spec = JsonSchemaSpec(
+            kind="json_schema",
+            schema={"type": "object", "required": ["name"]},
+        )
+        assert run_grader(spec, '{"name": "alice"}').passed is True
+        assert run_grader(spec, '{"age": 3}').passed is False

@@ -29,6 +29,15 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .errors import ConfigError, format_validation_error
+from .graders import (
+    GraderConfigError,
+    GradeResult,
+    grade_contains,
+    grade_exact,
+    grade_json_schema,
+    grade_numeric_tolerance,
+    grade_regex,
+)
 
 CASE_SUFFIXES = (".yaml", ".yml")
 
@@ -168,3 +177,28 @@ def load_suite(directory: str | Path, *, name: str | None = None) -> Suite:
         seen.add(case.id)
         cases.append(case)
     return Suite(name=name or path.name, path=path, cases=tuple(cases))
+
+
+def run_grader(spec: GraderSpec, completion: str) -> GradeResult:
+    """Run one grader against a completion, given its validated spec.
+
+    This is the one place that maps a validated :class:`GraderSpec` onto the
+    grader function that implements it. Nothing else in the package is
+    allowed to know that mapping.
+
+    Each branch uses ``isinstance`` to dispatch to the matching grader,
+    passing the spec's fields through as keyword arguments. After the five
+    branches, a ``GraderConfigError`` is raised naming the spec — this makes
+    a sixth spec class added without a branch fail loudly instead of silently.
+    """
+    if isinstance(spec, ExactSpec):
+        return grade_exact(completion, spec.expected, strip=spec.strip)
+    if isinstance(spec, ContainsSpec):
+        return grade_contains(completion, spec.substring, case_sensitive=spec.case_sensitive)
+    if isinstance(spec, RegexSpec):
+        return grade_regex(completion, spec.pattern, fullmatch=spec.fullmatch)
+    if isinstance(spec, NumericToleranceSpec):
+        return grade_numeric_tolerance(completion, spec.expected, tolerance=spec.tolerance)
+    if isinstance(spec, JsonSchemaSpec):
+        return grade_json_schema(completion, spec.json_schema)
+    raise GraderConfigError(f"unknown grader spec kind {type(spec).__name__!r}")
