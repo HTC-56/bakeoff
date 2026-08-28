@@ -1,0 +1,3 @@
+time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
+2026-08-28T07:15:54	plan	claude	commit	52	91323	25	0	475	plan next phase
+2026-08-28T07:17:10	loop	qwen	commit	37	5551	15	5	95	- [ ] §A1 — Add `grade_contains` to `src/bakeoff/graders.py`, mirroring `grade_exact`;
