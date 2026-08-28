@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 
 from bakeoff.runner import CaseOutcome
-from bakeoff.scoring import percentile
+from bakeoff.scoring import percentile, summarize
 
 
 def outcome(
@@ -62,3 +62,55 @@ class TestPercentile:
     def test_a_fraction_outside_the_unit_interval_is_rejected(self) -> None:
         with pytest.raises(ValueError, match="must be between"):
             percentile([1.0], 1.5)
+
+
+class TestSummarize:
+    def test_two_candidates_on_one_suite_give_two_summaries_in_first_seen_order(self) -> None:
+        outcomes = [
+            outcome(candidate="alpha"),
+            outcome(candidate="beta"),
+        ]
+        result = summarize(outcomes)
+        assert len(result) == 2
+        assert result[0].candidate == "alpha"
+        assert result[1].candidate == "beta"
+
+    def test_three_of_four_passes_yields_pass_rate_0_75(self) -> None:
+        outcomes = [
+            outcome(case_id="c1"),
+            outcome(case_id="c2", passed=False),
+            outcome(case_id="c3"),
+            outcome(case_id="c4"),
+        ]
+        result = summarize(outcomes)
+        assert len(result) == 1
+        summary = result[0]
+        assert summary.passed == 3
+        assert summary.cases == 4
+        assert summary.pass_rate == 0.75
+
+    def test_errored_outcome_counts_in_errors_and_cases(self) -> None:
+        outcomes = [
+            outcome(case_id="c1", passed=False, error="timeout"),
+            outcome(case_id="c2"),
+        ]
+        result = summarize(outcomes)
+        summary = result[0]
+        assert summary.errors == 1
+        assert summary.cases == 2
+        assert summary.pass_rate == 0.5
+
+    def test_p95_latency_ms_reuses_percentile(self) -> None:
+        outcomes = [outcome(case_id=f"c{n}", latency_ms=float(n * 10)) for n in range(1, 21)]
+        result = summarize(outcomes)
+        summary = result[0]
+        assert summary.p95_latency_ms == percentile([float(n * 10) for n in range(1, 21)], 0.95)
+
+    def test_max_tokens_per_case_is_the_largest_total(self) -> None:
+        outcomes = [
+            outcome(case_id="c1", prompt_tokens=3, completion_tokens=1),
+            outcome(case_id="c2", prompt_tokens=10, completion_tokens=5),
+            outcome(case_id="c3", prompt_tokens=2, completion_tokens=1),
+        ]
+        result = summarize(outcomes)
+        assert result[0].max_tokens_per_case == 15

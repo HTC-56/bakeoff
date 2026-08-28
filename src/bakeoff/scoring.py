@@ -22,6 +22,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 
 from .manifest import Thresholds
+from .runner import CaseOutcome
 
 
 def percentile(values: Sequence[float], fraction: float) -> float:
@@ -73,3 +74,41 @@ class PairVerdict:
     thresholds: Thresholds
     met: bool
     reasons: tuple[str, ...]
+
+
+def summarize(outcomes: Sequence[CaseOutcome]) -> tuple[PairSummary, ...]:
+    """One :class:`PairSummary` per ``(suite, candidate)`` group, first-seen order.
+
+    Groups the flat list of :class:`~bakeoff.runner.CaseOutcome` records by the pair
+    of suite name and candidate name, then builds one row per pair.  An outcome that
+    both passed *and* errored is counted in both ``passed`` and ``errors`` — the
+    grader never does that, but the math is safe either way.
+    """
+    groups: dict[tuple[str, str], list[CaseOutcome]] = {}
+    order: list[tuple[str, str]] = []
+    for o in outcomes:
+        key = (o.suite, o.candidate)
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(o)
+
+    summaries: list[PairSummary] = []
+    for suite, candidate in order:
+        cases = groups[(suite, candidate)]
+        n = len(cases)
+        passed = sum(1 for c in cases if c.passed)
+        errors = sum(1 for c in cases if c.errored)
+        summaries.append(
+            PairSummary(
+                suite=suite,
+                candidate=candidate,
+                cases=n,
+                passed=passed,
+                errors=errors,
+                pass_rate=passed / n if n else 0.0,
+                p95_latency_ms=percentile([c.latency_ms for c in cases], 0.95),
+                max_tokens_per_case=max((c.total_tokens for c in cases), default=0),
+            )
+        )
+    return tuple(summaries)

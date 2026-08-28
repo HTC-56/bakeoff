@@ -66,7 +66,7 @@ grep your own section and build it.
 - [x] §C1 — Add `malformed_reply` to `src/bakeoff/stub.py` and wire it into `do_POST`, so a
   `malformed:` prompt returns HTTP 200 with a body that is not a chat completion. Tests in
   `tests/test_stub_end_to_end.py`. Gate: §C0's five commands.
-- [ ] §C2 — Add `summarize(outcomes)` to `src/bakeoff/scoring.py`: one `PairSummary` per
+- [x] §C2 — Add `summarize(outcomes)` to `src/bakeoff/scoring.py`: one `PairSummary` per
   suite x candidate pair. Tests in `tests/test_scoring.py`. Gate: §C0.
 - [ ] §C3 — Add `judge(summaries, bar)` and `exit_code(verdicts)` to
   `src/bakeoff/scoring.py`, using `Bar.for_pair`. Tests in `tests/test_scoring.py`. Gate: §C0.
