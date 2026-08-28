@@ -15,3 +15,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T09:57:56	loop	qwen	commit	60	10017	25	5	1310	- [ ] §C1 — Add `malformed_reply` to `src/bakeoff/stub.py` and wire it into `do_POST`, so a
 2026-08-28T10:22:05	loop	qwen	commit	126	20371	53	12	1447	- [ ] §C2 — Add `summarize(outcomes)` to `src/bakeoff/scoring.py`: one `PairSummary` per
 2026-08-28T10:37:21	loop	qwen	commit	127	22593	51	13	914	- [ ] §C3 — Add `judge(summaries, bar)` and `exit_code(verdicts)` to
+2026-08-28T10:42:35	loop	qwen	commit	154	31074	61	16	313	- [ ] §C4 — Prove the runner against the bundled stub: new `TestRunAuditionEndToEnd` in
