@@ -17,6 +17,9 @@ dev = [
     "mypy>=1.11",
     "pytest>=8.2",
     "ruff>=0.6",
+    # Type stubs only. PyYAML ships no py.typed, and mypy --strict is never weakened
+    # to pass a gate; this is a dev-group stub package, not a runtime dependency.
+    "types-PyYAML>=6.0",
 ]
 
 [build-system]
