@@ -19,9 +19,11 @@ from bakeoff.freeze import (
     HASH_PREFIX,
     LOCKFILE_VERSION,
     FreezeError,
+    FreezeStatus,
     Lockfile,
     bar_hash,
     canonical_bar,
+    check_freeze,
     find_lockfile,
     freeze_bar,
     lockfile_path,
@@ -252,3 +254,42 @@ class TestFindLockfile:
         (tmp_path / "audition.lock").write_text("bar_hash: 3\n")
         with pytest.raises(FreezeError):
             find_lockfile(manifest_path)
+
+
+class TestCheckFreeze:
+    def test_no_lockfile_is_unfrozen(self) -> None:
+        bar = make_bar()
+        check = check_freeze(bar, lock=None)
+        assert check.status == FreezeStatus.UNFROZEN
+        assert check.frozen_hash is None
+
+    def test_unfrozen_still_reports_current_hash(self) -> None:
+        bar = make_bar()
+        check = check_freeze(bar, lock=None)
+        assert check.current_hash == bar_hash(bar)
+
+    def test_same_manifest_gives_frozen(self) -> None:
+        manifest = make_manifest()
+        bar = manifest.bar
+        lock = freeze_bar(manifest, manifest_path="audition.yaml", now=FROZEN_AT)
+        check = check_freeze(bar, lock)
+        assert check.status == FreezeStatus.FROZEN
+        assert check.current_hash == check.frozen_hash
+
+    def test_different_bar_gives_rebarred(self) -> None:
+        manifest = make_manifest()
+        original_hash = bar_hash(manifest.bar)
+        different_bar = make_bar(min_pass_rate=0.5)
+        lock = freeze_bar(manifest, manifest_path="audition.yaml", now=FROZEN_AT)
+        check = check_freeze(different_bar, lock)
+        assert check.status == FreezeStatus.REBARRED
+        assert check.current_hash != check.frozen_hash
+        assert check.current_hash == bar_hash(different_bar)
+        assert check.frozen_hash == original_hash
+
+    def test_rebarred_keeps_frozen_hash(self) -> None:
+        lock = make_lockfile()
+        different_bar = make_bar(min_pass_rate=0.5)
+        check = check_freeze(different_bar, lock)
+        assert check.status == FreezeStatus.REBARRED
+        assert check.frozen_hash == lock.bar_hash

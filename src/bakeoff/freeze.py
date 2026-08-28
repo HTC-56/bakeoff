@@ -205,3 +205,35 @@ def find_lockfile(manifest_path: str | Path) -> Lockfile | None:
     if not path.exists():
         return None
     return read_lockfile(path)
+
+
+def check_freeze(bar: Bar, lock: Lockfile | None) -> FreezeCheck:
+    """Compare the current bar against a pre-registered lockfile.
+
+    Returns a :class:`FreezeCheck` whose status is one of three values:
+
+    * ``UNFROZEN`` — no lockfile was provided.
+    * ``FROZEN`` — the lockfile's bar hash matches the bar's hash.
+    * ``REBARRED`` — the lockfile exists but the hash differs.
+
+    ``current_hash`` is always the hash of the bar passed in; ``frozen_hash`` is the
+    lockfile's recorded hash when a lockfile is present, or ``None`` otherwise.
+    """
+    current = bar_hash(bar)
+    if lock is None:
+        return FreezeCheck(
+            status=FreezeStatus.UNFROZEN,
+            current_hash=current,
+            frozen_hash=None,
+        )
+    if lock.bar_hash == current:
+        return FreezeCheck(
+            status=FreezeStatus.FROZEN,
+            current_hash=current,
+            frozen_hash=lock.bar_hash,
+        )
+    return FreezeCheck(
+        status=FreezeStatus.REBARRED,
+        current_hash=current,
+        frozen_hash=lock.bar_hash,
+    )

@@ -85,7 +85,7 @@ the `Lockfile` model, read/write, and the `FreezeStatus`/`FreezeCheck` shapes) p
 `tests/test_freeze.py` and its helpers. Read **§D0 in TASK_PHASE_D.md first** — gate,
 typing rules, and an index of what D0 gives you. Then grep your own section and build it.
 
-- [ ] §D1 — Add `check_freeze(bar, lock)` to `src/bakeoff/freeze.py`, returning a
+- [x] §D1 — Add `check_freeze(bar, lock)` to `src/bakeoff/freeze.py`, returning a
   `FreezeCheck` with one of the three statuses; `TestCheckFreeze` in
   `tests/test_freeze.py`. Gate: §D0's five commands.
 - [ ] §D2 — Add `require_freeze(check, *, rebar)` to `src/bakeoff/freeze.py`: raises
