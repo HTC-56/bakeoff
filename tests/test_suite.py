@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from bakeoff.suite import (
     Case,
     ContainsSpec,
@@ -15,6 +17,7 @@ from bakeoff.suite import (
     NumericToleranceSpec,
     RegexSpec,
     Suite,
+    SuiteError,
     load_suite,
     parse_case,
     run_grader,
@@ -146,3 +149,55 @@ class TestRunGrader:
         )
         assert run_grader(spec, '{"name": "alice"}').passed is True
         assert run_grader(spec, '{"age": 3}').passed is False
+
+
+class TestSuiteErrors:
+    """Assert that load_suite raises SuiteError with fixable messages."""
+
+    def test_nonexistent_directory_raises(self) -> None:
+        with pytest.raises(SuiteError) as exc:
+            load_suite(Path("/this/path/does/not/exist"))
+        msg = str(exc.value)
+        assert "does not exist" in msg
+
+    def test_empty_directory_raises(self, tmp_path: Path) -> None:
+        empty_dir = tmp_path / "empty"
+        empty_dir.mkdir()
+        with pytest.raises(SuiteError) as exc:
+            load_suite(empty_dir)
+        msg = str(exc.value)
+        assert "no case files" in msg
+
+    def test_empty_prompt_raises(self, tmp_path: Path) -> None:
+        directory = tmp_path / "smoke"
+        directory.mkdir()
+        (directory / "a.yaml").write_text('prompt: ""\ngrader:\n  kind: exact\n  expected: "x"\n')
+        with pytest.raises(SuiteError) as exc:
+            load_suite(directory)
+        msg = str(exc.value)
+        assert "prompt" in msg
+
+    def test_unknown_grader_kind_raises(self, tmp_path: Path) -> None:
+        directory = tmp_path / "smoke"
+        directory.mkdir()
+        (directory / "a.yaml").write_text("prompt: hello\ngrader:\n  kind: magic\n  stuff: true\n")
+        with pytest.raises(SuiteError) as exc:
+            load_suite(directory)
+        msg = str(exc.value)
+        # The message should list the valid kinds
+        assert "exact" in msg
+        assert "contains" in msg
+        assert "regex" in msg
+        assert "numeric_tolerance" in msg
+        assert "json_schema" in msg
+
+    def test_duplicate_case_ids_raises(self, tmp_path: Path) -> None:
+        directory = tmp_path / "smoke"
+        directory.mkdir()
+        case_text = 'prompt: hello\ngrader:\n  kind: exact\n  expected: "x"\n'
+        (directory / "a.yaml").write_text("id: dup\n" + case_text)
+        (directory / "b.yaml").write_text("id: dup\n" + case_text)
+        with pytest.raises(SuiteError) as exc:
+            load_suite(directory)
+        msg = str(exc.value)
+        assert "duplicate" in msg

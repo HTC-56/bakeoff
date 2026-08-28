@@ -16,3 +16,12 @@ Phase A shipped the toolchain (uv, ruff, mypy --strict, pytest), four graders
 HTTP seam in the bundled stub server (including the `error_status` switch),
 `scrub-check.sh`, CI, `README.md`, and `verify.sh`. Still missing: the audition
 manifest, the bar and freeze mechanic, the runner, the report, the CLI.
+
+## Phase B
+
+Phase B shipped the audition manifest (`Audition` dataclass, `load_audition`, bar model
+with per-pair overrides), task suites as files (five grader spec classes and the
+`run_grader` dispatch), the fifth grader (`grade_json_schema`), the quickstart example
+under `examples/quickstart`, and validation-error tests in
+`TestManifestErrors` and `TestSuiteErrors`. Still missing: the freeze/lockfile and
+REBARRED mechanic, the runner, the report, the CLI, `docs/PROCESS.md`.

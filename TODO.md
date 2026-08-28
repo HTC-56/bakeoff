@@ -48,9 +48,9 @@ Then grep your own section and build it.
 - [x] §B4 — Write `examples/quickstart/audition.yaml` and five case files under
   `examples/quickstart/suites/smoke/`, one per grader kind, all passing against the
   bundled stub. New `tests/test_examples.py`. Gate: §B0.
-- [ ] §B5 — Assert the validation promise: `TestManifestErrors` in
+- [x] §B5 — Assert the validation promise: `TestManifestErrors` in
   `tests/test_manifest.py` and `TestSuiteErrors` in `tests/test_suite.py`. Tests
   only, no source changes. Gate: §B0.
-- [ ] |- §B6 — Run `bash verify.sh`, then append a Phase B section to `STATUS.md` and
+- [x] |- §B6 — Run `bash verify.sh`, then append a Phase B section to `STATUS.md` and
   update rows 1-4 plus the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh`
   green.

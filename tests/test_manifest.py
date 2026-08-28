@@ -219,3 +219,140 @@ bar:
         with pytest.raises(ManifestError) as exc:
             load_audition(manifest_path)
         assert "smoke" in str(exc.value)
+
+
+class TestManifestErrors:
+    """Assert that parse_manifest raises ManifestError with fixable messages."""
+
+    def test_unknown_key_on_candidate(self) -> None:
+        with pytest.raises(ManifestError) as exc:
+            parse_manifest(
+                {
+                    "candidates": [
+                        {
+                            "name": "s",
+                            "base_url": "http://localhost:8000",
+                            "model": "m",
+                            "oops": True,
+                        },
+                    ],
+                    "suites": [{"name": "smoke", "path": "suites/smoke"}],
+                    "bar": {
+                        "defaults": {
+                            "min_pass_rate": 0.5,
+                            "max_p95_latency_ms": 1000.0,
+                            "max_tokens_per_case": 10,
+                        }
+                    },
+                },
+                source="inline",
+            )
+        msg = str(exc.value)
+        assert "candidates.0" in msg
+        assert "oops" in msg
+
+    def test_temperature_out_of_range(self) -> None:
+        with pytest.raises(ManifestError) as exc:
+            parse_manifest(
+                {
+                    "candidates": [
+                        {
+                            "name": "s",
+                            "base_url": "http://localhost:8000",
+                            "model": "m",
+                            "profile": {"temperature": 9},
+                        },
+                    ],
+                    "suites": [{"name": "smoke", "path": "suites/smoke"}],
+                    "bar": {
+                        "defaults": {
+                            "min_pass_rate": 0.5,
+                            "max_p95_latency_ms": 1000.0,
+                            "max_tokens_per_case": 10,
+                        }
+                    },
+                },
+                source="inline",
+            )
+        msg = str(exc.value)
+        assert "temperature" in msg
+
+    def test_base_url_without_scheme(self) -> None:
+        with pytest.raises(ManifestError) as exc:
+            parse_manifest(
+                {
+                    "candidates": [
+                        {"name": "s", "base_url": "localhost:8000", "model": "m"},
+                    ],
+                    "suites": [{"name": "smoke", "path": "suites/smoke"}],
+                    "bar": {
+                        "defaults": {
+                            "min_pass_rate": 0.5,
+                            "max_p95_latency_ms": 1000.0,
+                            "max_tokens_per_case": 10,
+                        }
+                    },
+                },
+                source="inline",
+            )
+        msg = str(exc.value)
+        assert "base_url" in msg
+        assert "http" in msg
+
+    def test_duplicate_candidate_names(self) -> None:
+        with pytest.raises(ManifestError) as exc:
+            parse_manifest(
+                {
+                    "candidates": [
+                        {"name": "dual", "base_url": "http://localhost:8000", "model": "m1"},
+                        {"name": "dual", "base_url": "http://localhost:9000", "model": "m2"},
+                    ],
+                    "suites": [{"name": "smoke", "path": "suites/smoke"}],
+                    "bar": {
+                        "defaults": {
+                            "min_pass_rate": 0.5,
+                            "max_p95_latency_ms": 1000.0,
+                            "max_tokens_per_case": 10,
+                        }
+                    },
+                },
+                source="inline",
+            )
+        msg = str(exc.value)
+        assert "duplicate" in msg
+
+    def test_bar_override_names_undeclared_suite(self) -> None:
+        with pytest.raises(ManifestError) as exc:
+            parse_manifest(
+                {
+                    "candidates": [
+                        {"name": "s", "base_url": "http://localhost:8000", "model": "m"},
+                    ],
+                    "suites": [{"name": "smoke", "path": "suites/smoke"}],
+                    "bar": {
+                        "defaults": {
+                            "min_pass_rate": 0.5,
+                            "max_p95_latency_ms": 1000.0,
+                            "max_tokens_per_case": 10,
+                        },
+                        "overrides": [{"suite": "phantom", "min_pass_rate": 1.0}],
+                    },
+                },
+                source="inline",
+            )
+        msg = str(exc.value)
+        assert "phantom" in msg
+
+    def test_manifest_with_no_bar(self) -> None:
+        with pytest.raises(ManifestError) as exc:
+            parse_manifest(
+                {
+                    "candidates": [
+                        {"name": "s", "base_url": "http://localhost:8000", "model": "m"},
+                    ],
+                    "suites": [{"name": "smoke", "path": "suites/smoke"}],
+                },
+                source="inline",
+            )
+        msg = str(exc.value)
+        assert "bar" in msg
