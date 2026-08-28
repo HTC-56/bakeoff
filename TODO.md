@@ -70,7 +70,7 @@ grep your own section and build it.
   suite x candidate pair. Tests in `tests/test_scoring.py`. Gate: §C0.
 - [x] §C3 — Add `judge(summaries, bar)` and `exit_code(verdicts)` to
   `src/bakeoff/scoring.py`, using `Bar.for_pair`. Tests in `tests/test_scoring.py`. Gate: §C0.
-- [ ] §C4 — Prove the runner against the bundled stub: new `TestRunAuditionEndToEnd` in
+- [x] §C4 — Prove the runner against the bundled stub: new `TestRunAuditionEndToEnd` in
   `tests/test_runner.py`, running the quickstart audition plus a 503 and a malformed case.
   Tests only, no source changes. Gate: §C0.
 - [ ] §C5 — Write `src/bakeoff/ledger.py` (`run_record`, `append_run`, `read_ledger`) and

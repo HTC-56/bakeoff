@@ -19,7 +19,7 @@ from typing import Any
 import httpx
 import pytest
 
-from bakeoff.manifest import Audition, Candidate, Manifest
+from bakeoff.manifest import Audition, Candidate, Manifest, load_audition
 from bakeoff.runner import (
     CaseOutcome,
     RetryPolicy,
@@ -28,6 +28,7 @@ from bakeoff.runner import (
     run_case,
     run_pair,
 )
+from bakeoff.stub import run_stub
 from bakeoff.suite import Case, Suite
 
 Handler = Callable[[httpx.Request], Any]
@@ -274,3 +275,106 @@ class TestRunAudition:
         results = self._run(audition, handler)
         assert len(results) == 4
         assert all(outcome.errored for outcome in results.outcomes)
+
+
+class TestRunAuditionEndToEnd:
+    """Prove the runner against the bundled stub on a real socket.
+
+    No network calls are made — the stub binds to a random localhost port.
+    """
+
+    def _load_quickstart(self, base_url: str) -> Audition:
+        """Load the quickstart audition and point its first candidate at ``base_url``."""
+        audition_path = (
+            Path(__file__).resolve().parent.parent / "examples" / "quickstart" / "audition.yaml"
+        )
+        audition = load_audition(audition_path)
+        audition.manifest.candidates[0].base_url = base_url
+        return audition
+
+    def test_quickstart_audition_returns_five_outcomes_all_passed(self) -> None:
+        with run_stub() as base_url:
+            audition = self._load_quickstart(base_url)
+            results = asyncio.run(run_audition(audition))
+
+        assert len(results.outcomes) == 5
+        assert all(outcome.candidate == "stub" for outcome in results.outcomes)
+        assert all(outcome.suite == "smoke" for outcome in results.outcomes)
+        assert all(outcome.passed is True for outcome in results.outcomes)
+        assert all(outcome.errored is False for outcome in results.outcomes)
+
+    def test_quickstart_has_one_attempt_and_captured_tokens(self) -> None:
+        with run_stub() as base_url:
+            audition = self._load_quickstart(base_url)
+            results = asyncio.run(run_audition(audition))
+
+        assert all(outcome.attempts == 1 for outcome in results.outcomes)
+        assert all(outcome.total_tokens > 0 for outcome in results.outcomes)
+
+    def test_503_becomes_errored_with_max_attempts(self) -> None:
+        with run_stub() as base_url:
+            case = make_case(case_id="e1", prompt="status:503: nope")
+            suite = Suite(name="smoke", path=Path("suites/smoke"), cases=(case,))
+            candidate = make_candidate(name="stub", concurrency=4)
+            candidate.base_url = base_url
+            audition_manifest = Manifest.model_validate(
+                {
+                    "version": 1,
+                    "candidates": [
+                        {
+                            "name": candidate.name,
+                            "base_url": candidate.base_url,
+                            "model": candidate.model,
+                        }
+                    ],
+                    "suites": [{"name": suite.name, "path": "suites/smoke"}],
+                    "bar": {
+                        "defaults": {
+                            "min_pass_rate": 1.0,
+                            "max_p95_latency_ms": 5000,
+                            "max_tokens_per_case": 100,
+                        },
+                    },
+                }
+            )
+            audition = Audition(manifest=audition_manifest, suites=(suite,))
+            policy = RetryPolicy(max_attempts=2, backoff_base_s=0.0)
+            results = asyncio.run(run_audition(audition, policy=policy))
+
+        assert len(results.outcomes) == 1
+        outcome = results.outcomes[0]
+        assert outcome.errored is True
+        assert outcome.attempts == 2
+
+    def test_malformed_prompt_becomes_errored_not_crash(self) -> None:
+        with run_stub() as base_url:
+            case = make_case(case_id="e1", prompt="malformed: x")
+            suite = Suite(name="smoke", path=Path("suites/smoke"), cases=(case,))
+            candidate = make_candidate(name="stub", concurrency=4)
+            candidate.base_url = base_url
+            manifest = Manifest.model_validate(
+                {
+                    "version": 1,
+                    "candidates": [
+                        {
+                            "name": candidate.name,
+                            "base_url": candidate.base_url,
+                            "model": candidate.model,
+                        }
+                    ],
+                    "suites": [{"name": suite.name, "path": "suites/smoke"}],
+                    "bar": {
+                        "defaults": {
+                            "min_pass_rate": 1.0,
+                            "max_p95_latency_ms": 5000,
+                            "max_tokens_per_case": 100,
+                        },
+                    },
+                }
+            )
+            audition = Audition(manifest=manifest, suites=(suite,))
+            results = asyncio.run(run_audition(audition))
+
+        assert len(results.outcomes) == 1
+        outcome = results.outcomes[0]
+        assert outcome.errored is True
