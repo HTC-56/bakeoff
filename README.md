@@ -75,6 +75,18 @@ uv run bakeoff run --rebar myaudition/audition.yaml
 The report produced by `--rebar` carries both the frozen bar hash and the bar hash
 that was actually used. There is no way to quietly change the bar after results exist.
 
+## Auditing a real endpoint
+
+The quickstart above runs against the bundled stub. To audition a real model server,
+set two environment variables and run `scripts/live-check.sh`:
+
+```
+BAKEOFF_BASE_URL=http://localhost:8000 BAKEOFF_MODEL=gpt-4o bash scripts/live-check.sh
+```
+
+This project has never run `live-check.sh` against a real model — the loop only ever
+audited the bundled stub. Any claim that a non-stub endpoint works is a human's to make.
+
 ## Requirements
 
 Python 3.12+ and [uv](https://github.com/astral-sh/uv).
@@ -88,9 +100,11 @@ uv run ruff format --check .
 uv run mypy
 uv run pytest
 bash scripts/scrub-check.sh
+bash scripts/readme-lint.sh
 ```
 
-All five must be green before any change lands.
+All six must be green before any change lands. `bash verify.sh` runs all of them and
+prints a `6/6` summary.
 
 ## Running the bundled stub
 

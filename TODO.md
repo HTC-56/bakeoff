@@ -185,7 +185,7 @@ Then grep your own section and build it.
 - [x] §G5 — Write `scripts/live-check.sh`, mirroring `scripts/scrub-check.sh`: the
   human-run real-endpoint proof, driven by `$BAKEOFF_BASE_URL` and `$BAKEOFF_MODEL`.
   Gate: §G0 plus the script's own usage exit.
-- [ ] §G6 — `README.md`: add `## Auditing a real endpoint`, and fix `## Development`,
+- [x] §G6 — `README.md`: add `## Auditing a real endpoint`, and fix `## Development`,
   which still says five gates when there are six. Docs only. Gate: `bash verify.sh` 6/6.
 - [ ] §G7 — Add a script-path check to `scripts/readme-lint.sh` and a `readme-lint` step
   to `.github/workflows/ci.yml`. Gate: `bash verify.sh` 6/6.
