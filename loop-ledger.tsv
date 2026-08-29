@@ -70,3 +70,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T21:27:39	loop	qwen	commit	128	19846	49	16	544	- [ ] §E2 — Add `_spend` to `src/bakeoff/report.py`: per-candidate token totals plus
 2026-08-28T21:38:34	loop	qwen	commit	106	16814	41	14	654	- [ ] §E3 — Prove REBARRED branding from a manifest frozen then edited on disk:
 2026-08-28T21:56:34	loop	qwen	commit	88	12310	34	8	1079	- [ ] §E4 — Assert the report is one self-contained file: no `<script>`, `<link>`,
+2026-08-28T22:23:33	loop	qwen	commit	117	17387	50	8	1617	- [ ] |- §E5 — New `tests/test_report_end_to_end.py`: run the quickstart audition
