@@ -180,7 +180,7 @@ Then grep your own section and build it.
   strings. Gate: §G0.
 - [x] §G3 — New `tests/test_quickstart_path.py`: walk the README quickstart with
   `invoke`, starting from a directory that does not exist. Tests only. Gate: §G0.
-- [ ] §G4 — Second class in `tests/test_quickstart_path.py`: freeze, edit the bar, assert
+- [x] |- §G4 — Second class in `tests/test_quickstart_path.py`: freeze, edit the bar, assert
   `run` exits 2 and `run --rebar` brands the report REBARRED. Tests only. Gate: §G0.
 - [ ] §G5 — Write `scripts/live-check.sh`, mirroring `scripts/scrub-check.sh`: the
   human-run real-endpoint proof, driven by `$BAKEOFF_BASE_URL` and `$BAKEOFF_MODEL`.
