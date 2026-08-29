@@ -131,3 +131,35 @@ build it.
 - [x] |- §E6 — Run `bash verify.sh`, then append a Phase E section to `STATUS.md` and
   update rows 6 and 9 plus the reservations ledger in `ROADMAP.md`. Gate:
   `bash verify.sh` green.
+
+## Phase F: the CLI — see TASK_PHASE_F.md
+
+The hard module is already committed (`feat(F0)`): `src/bakeoff/cli.py` (the click
+group, the `fixable()` error seam, and the `run` and `report` commands) plus
+`tests/test_cli.py` and its helpers. Read **§F0 in TASK_PHASE_F.md first** — gate,
+typing rules, the exit-code contract, and an index of what F0 gives you. Then grep
+your own section and build it.
+
+- [ ] §F1 — Add the `validate` command to `src/bakeoff/cli.py`: print the candidates,
+  the suites, the case count and the freeze state, never failing on the freeze.
+  `TestValidateCommand` in `tests/test_cli.py`. Gate: §F0's five commands.
+- [ ] §F2 — Add the `freeze` command to `src/bakeoff/cli.py`, writing the lockfile
+  beside the manifest and saying whether the bar was new, unchanged or moved.
+  `TestFreezeCommand` in `tests/test_cli.py`. Gate: §F0.
+- [ ] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five
+  case files as constants, plus `write_scaffold`) and `tests/test_templates.py`.
+  Content mirrors `examples/quickstart/`. Gate: §F0.
+- [ ] §F4 — Add the `init` command to `src/bakeoff/cli.py`, calling `write_scaffold`
+  with a `--force` flag. `TestInitCommand` in `tests/test_cli.py`. Gate: §F0.
+- [ ] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
+  freeze mechanic` sections; every command shown must really exist. Docs only. Gate:
+  `bash verify.sh` green.
+- [ ] |- §F6 — Write `scripts/readme-lint.sh` (every `bakeoff` command the README
+  shows must exist) and add one `run_gate` line for it to `verify.sh`. Gate:
+  `bash verify.sh` reports 6/6.
+- [ ] |- §F7 — Write `docs/PROCESS.md`: the loop's shape, one line per phase A–F, the
+  real commit count from `git log`, the planner/executor split, and what is not
+  proven. Gate: `bash verify.sh` green.
+- [ ] |- §F8 — Run `bash verify.sh`, then append a Phase F section to `STATUS.md` and
+  flip rows 7, 9 and the `docs/PROCESS.md` row in `ROADMAP.md`, plus the reservations
+  ledger. Gate: `bash verify.sh` green.
