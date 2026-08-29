@@ -175,7 +175,7 @@ Then grep your own section and build it.
 - [x] §G1 — Fix `write_scaffold` in `src/bakeoff/templates.py` so it creates the target
   directory before writing `audition.yaml`. New class in `tests/test_templates.py`.
   Gate: §G0's five commands.
-- [ ] §G2 — Reword the REBARRED `FreezeError` message in `src/bakeoff/freeze.py` — "bar
+- [x] §G2 — Reword the REBARRED `FreezeError` message in `src/bakeoff/freeze.py` — "bar
   rebars since freeze" is not English. Update `TestRequireFreeze` and any pinned match
   strings. Gate: §G0.
 - [ ] §G3 — New `tests/test_quickstart_path.py`: walk the README quickstart with

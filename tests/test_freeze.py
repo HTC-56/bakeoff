@@ -334,8 +334,10 @@ class TestRequireFreeze:
         with pytest.raises(FreezeError) as excinfo:
             require_freeze(check, rebar=False)
         msg = str(excinfo.value)
+        assert "moved" in msg
         assert "sha256:ccc" + "d" * 61 in msg
         assert "sha256:aaa" + "b" * 61 in msg
+        assert "--rebar" in msg
 
     def test_rebarred_with_rebar_true_returns_none(self) -> None:
         check = FreezeCheck(

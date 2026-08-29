@@ -253,6 +253,6 @@ def require_freeze(check: FreezeCheck, *, rebar: bool) -> None:
     # REBARRED
     if not rebar:
         raise FreezeError(
-            f"bar rebars since freeze — frozen: {check.frozen_hash}, "
+            f"bar has moved since freeze — frozen: {check.frozen_hash}, "
             f"current: {check.current_hash}; pass --rebar to proceed"
         )
