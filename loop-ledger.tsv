@@ -75,3 +75,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T23:10:43	plan	claude	commit	82	101278	50	8	540	plan next phase
 2026-08-28T23:20:14	loop	qwen	commit	70	10403	27	4	629	- [ ] §F1 — Add the `validate` command to `src/bakeoff/cli.py`: print the candidates,
 2026-08-28T23:31:46	loop	qwen	commit	120	19324	45	9	690	- [ ] §F2 — Add the `freeze` command to `src/bakeoff/cli.py`, writing the lockfile
+2026-08-28T23:54:11	loop	qwen	commit	117	20413	46	9	1344	- [ ] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five
