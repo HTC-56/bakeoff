@@ -86,3 +86,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-29T02:13:48	loop	qwen	commit	141	36371	63	9	454	- [ ] §G5 — Write `scripts/live-check.sh`, mirroring `scripts/scrub-check.sh`: the
 2026-08-29T02:19:41	loop	qwen	commit	102	21349	43	7	352	- [ ] §G6 — `README.md`: add `## Auditing a real endpoint`, and fix `## Development`,
 2026-08-29T02:34:34	loop	qwen	commit	88	11129	34	7	891	- [ ] §G7 — Add a script-path check to `scripts/readme-lint.sh` and a `readme-lint` step
+2026-08-29T02:47:55	loop	qwen	commit	115	19644	45	11	800	- [ ] |- §G8 — Run `bash verify.sh`, then append a Phase G section to `STATUS.md` and
