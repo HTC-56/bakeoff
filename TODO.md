@@ -163,3 +163,32 @@ your own section and build it.
 - [x] |- §F8 — Run `bash verify.sh`, then append a Phase F section to `STATUS.md` and
   flip rows 7, 9 and the `docs/PROCESS.md` row in `ROADMAP.md`, plus the reservations
   ledger. Gate: `bash verify.sh` green.
+
+## Phase G: the stranger's path — see TASK_PHASE_G.md
+
+Rows 7 and 9 went back to PARTIAL: `bakeoff init myaudition` — the README's first
+command — crashes when the directory does not exist, and `scripts/live-check.sh` is
+named by SPEC.md, DECISIONS.md and the README but was never written. Read **§G0 in
+TASK_PHASE_G.md first** — gate, conventions, and the test helpers you must reuse.
+Then grep your own section and build it.
+
+- [ ] §G1 — Fix `write_scaffold` in `src/bakeoff/templates.py` so it creates the target
+  directory before writing `audition.yaml`. New class in `tests/test_templates.py`.
+  Gate: §G0's five commands.
+- [ ] §G2 — Reword the REBARRED `FreezeError` message in `src/bakeoff/freeze.py` — "bar
+  rebars since freeze" is not English. Update `TestRequireFreeze` and any pinned match
+  strings. Gate: §G0.
+- [ ] §G3 — New `tests/test_quickstart_path.py`: walk the README quickstart with
+  `invoke`, starting from a directory that does not exist. Tests only. Gate: §G0.
+- [ ] §G4 — Second class in `tests/test_quickstart_path.py`: freeze, edit the bar, assert
+  `run` exits 2 and `run --rebar` brands the report REBARRED. Tests only. Gate: §G0.
+- [ ] §G5 — Write `scripts/live-check.sh`, mirroring `scripts/scrub-check.sh`: the
+  human-run real-endpoint proof, driven by `$BAKEOFF_BASE_URL` and `$BAKEOFF_MODEL`.
+  Gate: §G0 plus the script's own usage exit.
+- [ ] §G6 — `README.md`: add `## Auditing a real endpoint`, and fix `## Development`,
+  which still says five gates when there are six. Docs only. Gate: `bash verify.sh` 6/6.
+- [ ] §G7 — Add a script-path check to `scripts/readme-lint.sh` and a `readme-lint` step
+  to `.github/workflows/ci.yml`. Gate: `bash verify.sh` 6/6.
+- [ ] |- §G8 — Run `bash verify.sh`, then append a Phase G section to `STATUS.md` and
+  flip rows 7 and 9 in `ROADMAP.md` back to SHIPPED, plus three reservations ledger
+  lines. Gate: `bash verify.sh` green.
