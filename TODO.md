@@ -103,3 +103,31 @@ typing rules, and an index of what D0 gives you. Then grep your own section and 
 - [x] |- §D6 — Run `bash verify.sh`, then append a Phase D section to `STATUS.md` and
   update rows 4 and 9 plus the reservations ledger in `ROADMAP.md`. Gate: `bash verify.sh`
   green.
+
+## Phase E: the report — see TASK_PHASE_E.md
+
+The hard module is already committed (`feat(E0)`): `src/bakeoff/report.py` (the
+results document, `results.json` read/write, and the HTML page with header, freeze
+banner and scoreboard) plus `tests/test_report.py` and its helpers. Read **§E0 in
+TASK_PHASE_E.md first** — gate, typing rules, the `sections` anchor in
+`render_report`, and an index of what E0 gives you. Then grep your own section and
+build it.
+
+- [ ] §E1 — Add `_case_drilldown` to `src/bakeoff/report.py` (one `<details>` per pair,
+  the actual completions, escaped) and add it to the `sections` list;
+  `TestCaseDrilldown` in `tests/test_report.py`. Gate: §E0's five commands.
+- [ ] §E2 — Add `_spend` to `src/bakeoff/report.py`: per-candidate token totals plus
+  p50/p95/slowest latency from `scoring.percentile`; add it to `sections`. `TestSpend`
+  in `tests/test_report.py`. Gate: §E0.
+- [ ] §E3 — Prove REBARRED branding from a manifest frozen then edited on disk:
+  `TestRebarredReport` in `tests/test_report.py`, mirroring `TestRebarredEndToEnd` in
+  `tests/test_freeze.py`. Tests only. Gate: §E0.
+- [ ] §E4 — Assert the report is one self-contained file: no `<script>`, `<link>`,
+  `@import`, `url(` or external URL, and a re-render never changes it.
+  `TestSelfContained` in `tests/test_report.py`. Tests only. Gate: §E0.
+- [ ] |- §E5 — New `tests/test_report_end_to_end.py`: run the quickstart audition
+  against the bundled stub, write `results.json` + `report.html` into `tmp_path`, and
+  assert both. Tests only. Gate: §E0.
+- [ ] |- §E6 — Run `bash verify.sh`, then append a Phase E section to `STATUS.md` and
+  update rows 6 and 9 plus the reservations ledger in `ROADMAP.md`. Gate:
+  `bash verify.sh` green.
