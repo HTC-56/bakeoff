@@ -80,3 +80,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-29T00:42:30	loop	qwen	commit	239	45603	95	22	1900	- [ ] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
 2026-08-29T00:55:13	plan	claude	commit	69	99946	38	4	500	plan next phase
 2026-08-29T01:13:49	loop	qwen	commit	43	5792	16	5	1155	- [ ] §G1 — Fix `write_scaffold` in `src/bakeoff/templates.py` so it creates the target
+2026-08-29T01:32:08	loop	qwen	commit	96	13189	38	8	1098	- [ ] §G2 — Reword the REBARRED `FreezeError` message in `src/bakeoff/freeze.py` — "bar
