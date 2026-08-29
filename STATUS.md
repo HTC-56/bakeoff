@@ -59,3 +59,13 @@ manifest and five case files as constants plus `write_scaffold`), the rewritten 
 with `## Quickstart` and `## The freeze mechanic` sections, the README-quickstart lint
 gate (`scripts/readme-lint.sh`), and `docs/PROCESS.md`. Still missing: the README hero
 screenshot, which needs a human with a browser.
+
+## Phase G
+
+Phase G fixed `write_scaffold` so `bakeoff init <dir>` works when the directory does not
+exist, reworded the REBARRED `FreezeError` message ("bar rebars since freeze" is not
+English), added `tests/test_quickstart_path.py` (walk the README quickstart from a
+non-existent directory, prove REBARRED on disk), wrote
+`scripts/live-check.sh` (human-run real-endpoint proof), added `## Auditing a real
+endpoint` to the README, fixed the Development gate count, and added a script-path check
+to `readme-lint.sh`. Still missing: the README hero screenshot and any real-endpoint run.

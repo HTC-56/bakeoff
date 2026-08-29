@@ -189,6 +189,6 @@ Then grep your own section and build it.
   which still says five gates when there are six. Docs only. Gate: `bash verify.sh` 6/6.
 - [x] §G7 — Add a script-path check to `scripts/readme-lint.sh` and a `readme-lint` step
   to `.github/workflows/ci.yml`. Gate: `bash verify.sh` 6/6.
-- [ ] |- §G8 — Run `bash verify.sh`, then append a Phase G section to `STATUS.md` and
+- [x] |- §G8 — Run `bash verify.sh`, then append a Phase G section to `STATUS.md` and
   flip rows 7 and 9 in `ROADMAP.md` back to SHIPPED, plus three reservations ledger
   lines. Gate: `bash verify.sh` green.
