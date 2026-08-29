@@ -149,7 +149,7 @@ your own section and build it.
 - [x] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five
   case files as constants, plus `write_scaffold`) and `tests/test_templates.py`.
   Content mirrors `examples/quickstart/`. Gate: §F0.
-- [ ] §F4 — Add the `init` command to `src/bakeoff/cli.py`, calling `write_scaffold`
+- [x] §F4 — Add the `init` command to `src/bakeoff/cli.py`, calling `write_scaffold`
   with a `--force` flag. `TestInitCommand` in `tests/test_cli.py`. Gate: §F0.
 - [ ] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
   freeze mechanic` sections; every command shown must really exist. Docs only. Gate:

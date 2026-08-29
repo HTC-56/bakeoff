@@ -53,6 +53,7 @@ from .manifest import Audition, load_audition
 from .report import read_results, results_document, write_report, write_results
 from .runner import run_audition_sync
 from .scoring import PairVerdict, exit_code, judge, summarize
+from .templates import write_scaffold
 
 DEFAULT_MANIFEST = "audition.yaml"
 """What every command assumes when the user names no manifest."""
@@ -135,6 +136,31 @@ def main() -> None:
     runs; freeze the bar; then run the audition and read the report. A bar edited
     after the freeze runs only with --rebar, and the report says so.
     """
+
+
+@main.command()
+@click.argument(
+    "directory",
+    default=".",
+    type=click.Path(file_okay=False, path_type=Path),
+)
+@click.option(
+    "--force",
+    is_flag=True,
+    help="Overwrite existing files in the target directory.",
+)
+def init(directory: Path, force: bool) -> None:
+    """Write a working audition scaffold into *directory*.
+
+    Creates ``audition.yaml`` and a ``suites/smoke/`` directory with five case
+    files.  A separate ``bakeoff freeze`` is required to lock the bar.
+    """
+    paths = []
+    with fixable():
+        paths = write_scaffold(directory, force=force)
+    for p in paths:
+        click.echo(f"wrote {p}")
+    click.echo("next steps:  bakeoff freeze audition.yaml  bakeoff run audition.yaml")
 
 
 @main.command()

@@ -375,3 +375,52 @@ class TestFreezeCommand:
         result = invoke("freeze", "/tmp/does/not/exist/audition.yaml")
         assert result.exit_code == CONFIG_EXIT_CODE
         assert "Traceback" not in result.output
+
+
+class TestInitCommand:
+    """`bakeoff init` — write a working audition scaffold."""
+
+    def test_init_creates_manifest_and_exits_zero(self, tmp_path: Path) -> None:
+        dest = tmp_path / "project"
+        dest.mkdir()
+        result = invoke("init", str(dest))
+
+        assert result.exit_code == 0, result.output
+        assert (dest / "audition.yaml").is_file()
+
+    def test_init_output_naming_next_steps(self, tmp_path: Path) -> None:
+        dest = tmp_path / "project"
+        dest.mkdir()
+        result = invoke("init", str(dest))
+
+        assert "freeze" in result.output
+        assert "run" in result.output
+
+    def test_init_twice_exits_config_code(self, tmp_path: Path) -> None:
+        dest = tmp_path / "project"
+        dest.mkdir()
+        invoke("init", str(dest))
+        result = invoke("init", str(dest))
+
+        assert result.exit_code == CONFIG_EXIT_CODE
+        assert "already exists" in result.output
+
+    def test_init_force_overwrites_existing(self, tmp_path: Path) -> None:
+        dest = tmp_path / "project"
+        dest.mkdir()
+        invoke("init", str(dest))
+        result = invoke("init", "--force", str(dest))
+
+        assert result.exit_code == 0, result.output
+
+    def test_init_then_freeze_then_validate(self, tmp_path: Path) -> None:
+        dest = tmp_path / "project"
+        dest.mkdir()
+        invoke("init", str(dest))
+        manifest = dest / "audition.yaml"
+
+        freeze_result = invoke("freeze", str(manifest))
+        assert freeze_result.exit_code == 0, freeze_result.output
+
+        validate_result = invoke("validate", str(manifest))
+        assert validate_result.exit_code == 0, validate_result.output
