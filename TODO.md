@@ -140,7 +140,7 @@ group, the `fixable()` error seam, and the `run` and `report` commands) plus
 typing rules, the exit-code contract, and an index of what F0 gives you. Then grep
 your own section and build it.
 
-- [ ] §F1 — Add the `validate` command to `src/bakeoff/cli.py`: print the candidates,
+- [x] |- §F1 — Add the `validate` command to `src/bakeoff/cli.py`: print the candidates,
   the suites, the case count and the freeze state, never failing on the freeze.
   `TestValidateCommand` in `tests/test_cli.py`. Gate: §F0's five commands.
 - [ ] §F2 — Add the `freeze` command to `src/bakeoff/cli.py`, writing the lockfile

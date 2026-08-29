@@ -213,3 +213,66 @@ class TestReportCommand:
 
         assert result.exit_code == CONFIG_EXIT_CODE
         assert "cannot read results" in result.output
+
+
+class TestValidateCommand:
+    """`bakeoff validate` — print what is in the audition without running it."""
+
+    def test_quickstart_exits_zero_and_names_parts(self) -> None:
+        dest = Path("tmp_validate_quickstart")
+        dest.mkdir(exist_ok=True)
+        try:
+            copy_quickstart(dest / "audition")
+            result = invoke("validate", str(dest / "audition" / "audition.yaml"))
+            assert result.exit_code == 0, result.output
+            assert "stub" in result.output
+            assert "smoke" in result.output
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_output_states_five_cases(self) -> None:
+        dest = Path("tmp_validate_cases")
+        dest.mkdir(exist_ok=True)
+        try:
+            copy_quickstart(dest / "audition")
+            result = invoke("validate", str(dest / "audition" / "audition.yaml"))
+            assert "5 case" in result.output
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_output_mentions_frozen(self) -> None:
+        dest = Path("tmp_validate_frozen")
+        dest.mkdir(exist_ok=True)
+        try:
+            copy_quickstart(dest / "audition")
+            result = invoke("validate", str(dest / "audition" / "audition.yaml"))
+            assert "frozen" in result.output
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_unfrozen_lockfile_still_exits_zero(self) -> None:
+        dest = Path("tmp_validate_unfrozen")
+        dest.mkdir(exist_ok=True)
+        try:
+            copy_quickstart(dest / "audition")
+            lockfile = dest / "audition" / "audition.lock"
+            lockfile.unlink()
+            result = invoke("validate", str(dest / "audition" / "audition.yaml"))
+            assert result.exit_code == 0, result.output
+            assert "unfrozen" in result.output
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_missing_manifest_exits_config_code(self) -> None:
+        result = invoke("validate", "/tmp/does/not/exist/audition.yaml")
+        assert result.exit_code == CONFIG_EXIT_CODE
+        assert "cannot read manifest" in result.output
+        assert "Traceback" not in result.output

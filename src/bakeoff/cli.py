@@ -131,6 +131,29 @@ def main() -> None:
 
 @main.command()
 @_MANIFEST_ARGUMENT
+def validate(manifest: Path) -> None:
+    """Load the manifest and suites, print what is in the audition.
+
+    Never fails on the freeze — an unfrozen manifest is still valid.
+    """
+    with fixable():
+        audition = load(manifest)
+    check = freeze_state(audition, manifest)
+    candidates = audition.manifest.candidates
+    total_cases = sum(len(s) for s in audition.suites)
+    click.echo(
+        f"{manifest.name}: {len(candidates)} candidate(s), "
+        f"{len(audition.suites)} suite(s), {total_cases} case(s)"
+    )
+    for c in candidates:
+        click.echo(f"  candidate: {c.name}  model={c.model}  base_url={c.base_url}")
+    for s in audition.suites:
+        click.echo(f"  suite: {s.name}  ({len(s)} case(s))")
+    click.echo(f"  freeze: {describe_freeze(check)}")
+
+
+@main.command()
+@_MANIFEST_ARGUMENT
 @click.option(
     "--rebar",
     is_flag=True,
