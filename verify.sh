@@ -6,7 +6,7 @@
 # even when an earlier one fails so the user sees the full picture at
 # a glance.
 #
-# Gates (in order): ruff check, ruff format, mypy, pytest, scrub-check.
+# Gates (in order): ruff check, ruff format, mypy, pytest, scrub-check, readme-lint.
 set -uo pipefail
 cd "$(dirname "$0")"
 
@@ -37,6 +37,7 @@ run_gate "ruff format"      uv run ruff format --check .
 run_gate "mypy"             uv run mypy
 run_gate "pytest"           uv run pytest
 run_gate "scrub-check"      bash scripts/scrub-check.sh
+run_gate "readme-lint"      bash scripts/readme-lint.sh
 
 printf '\n===== %d/%d gates passed =====\n' "$pass" "$total"
 
