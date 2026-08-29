@@ -125,7 +125,7 @@ build it.
 - [x] §E4 — Assert the report is one self-contained file: no `<script>`, `<link>`,
   `@import`, `url(` or external URL, and a re-render never changes it.
   `TestSelfContained` in `tests/test_report.py`. Tests only. Gate: §E0.
-- [ ] |- §E5 — New `tests/test_report_end_to_end.py`: run the quickstart audition
+- [x] |- §E5 — New `tests/test_report_end_to_end.py`: run the quickstart audition
   against the bundled stub, write `results.json` + `report.html` into `tmp_path`, and
   assert both. Tests only. Gate: §E0.
 - [ ] |- §E6 — Run `bash verify.sh`, then append a Phase E section to `STATUS.md` and
