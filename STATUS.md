@@ -50,3 +50,12 @@ the spend table with p50/p95/slowest latency), the REBARRED branding proof in
 `TestRebarredReport`, the self-containment assertion in `TestSelfContained`, and the
 end-to-end pipeline test `TestReportEndToEnd`. Still missing: the CLI and
 `docs/PROCESS.md`.
+
+## Phase F
+
+Phase F shipped the CLI (`cli.py`: the click group with `init`, `validate`, `freeze`,
+`run`, `report` commands), the scaffold templates (`templates.py`: the quickstart
+manifest and five case files as constants plus `write_scaffold`), the rewritten README
+with `## Quickstart` and `## The freeze mechanic` sections, the README-quickstart lint
+gate (`scripts/readme-lint.sh`), and `docs/PROCESS.md`. Still missing: the README hero
+screenshot, which needs a human with a browser.

@@ -154,12 +154,12 @@ your own section and build it.
 - [x] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
   freeze mechanic` sections; every command shown must really exist. Docs only. Gate:
   `bash verify.sh` green.
-- [ ] |- §F6 — Write `scripts/readme-lint.sh` (every `bakeoff` command the README
+- [x] |- §F6 — Write `scripts/readme-lint.sh` (every `bakeoff` command the README
   shows must exist) and add one `run_gate` line for it to `verify.sh`. Gate:
   `bash verify.sh` reports 6/6.
-- [ ] |- §F7 — Write `docs/PROCESS.md`: the loop's shape, one line per phase A–F, the
+- [x] |- §F7 — Write `docs/PROCESS.md`: the loop's shape, one line per phase A–F, the
   real commit count from `git log`, the planner/executor split, and what is not
   proven. Gate: `bash verify.sh` green.
-- [ ] |- §F8 — Run `bash verify.sh`, then append a Phase F section to `STATUS.md` and
+- [x] |- §F8 — Run `bash verify.sh`, then append a Phase F section to `STATUS.md` and
   flip rows 7, 9 and the `docs/PROCESS.md` row in `ROADMAP.md`, plus the reservations
   ledger. Gate: `bash verify.sh` green.

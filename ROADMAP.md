@@ -11,10 +11,10 @@ are the one permitted exception to append-only docs.
 | 4 | Pre-registered bar + freeze/REBARRED mechanic | SHIPPED | D | bar model and per-pair thresholds shipped in B; bar hashing, the lockfile and the three freeze states shipped in D0; the freeze check, the `--rebar` gate and the quickstart lockfile shipped in D1–D3; REBARRED end-to-end proof in D5; the report's REBARRED branding lands with the report |
 | 5 | Runner (async httpx, retries, concurrency, usage capture) | SHIPPED | C | `runner.py` shipped in C0; stub-backed end-to-end proof is §C4; JSONL ledger is §C5 |
 | 6 | Report (self-contained HTML + results.json + exit code) | SHIPPED | E | `report.py` shipped in E0: the results document, `results.json` read/write, and the HTML page with the freeze banner and the scoreboard; the per-case drill-down is §E1, the spend table is §E2, the REBARRED branding proof is §E3, the self-containment assertion is §E4, and the end-to-end pipeline test is §E5; the README hero screenshot still needs a human with a browser |
-| 7 | CLI (init, validate, freeze, run, report) | PARTIAL | F | `cli.py` shipped in F0: the click group, the `fixable()` error seam, the exit-code contract (0 worked / 1 bar missed / 2 misconfigured), and the `run` and `report` commands — `run` also wires the ledger; `validate` is §F1, `freeze` is §F2, the scaffold templates are §F3 and `init` is §F4 |
+| 7 | CLI (init, validate, freeze, run, report) | SHIPPED | F | five commands shipped: `init` (§F4), `validate` (§F1), `freeze` (§F2), `run`, and `report`; scaffold templates (§F3); README quickstart (§F5) |
 | 8 | Bundled stub OpenAI-compatible server | SHIPPED | A |
-| 9 | Deploy-grade packaging (pyproject, CI, quickstart, ledger) | PARTIAL | F | pyproject, CI, scrub-check, verify.sh, README shipped; JSONL ledger shipped in C and wired to `bakeoff run` in F0; the `bakeoff` entry point shipped in F0; the README quickstart is §F5 and the README-quickstart lint §A6 deferred is §F6 |
-| — | docs/PROCESS.md (the loop story) | PARTIAL | F | written in §F7, now that there is a six-phase history to excerpt |
+| 9 | Deploy-grade packaging (pyproject, CI, quickstart, ledger) | SHIPPED | F | pyproject, CI, scrub-check, verify.sh, README shipped; JSONL ledger shipped in C and wired to `bakeoff run` in F0; the `bakeoff` entry point shipped in F0; the README quickstart is §F5 and the README-quickstart lint §A6 deferred is §F6 |
+| — | docs/PROCESS.md (the loop story) | SHIPPED | F | written in §F7 |
 
 When every row reads SHIPPED and verify.sh is green, the project is done — the
 planning lane declares PROJECT SPEC COMPLETE rather than inventing scope.
@@ -45,3 +45,7 @@ planning lane declares PROJECT SPEC COMPLETE rather than inventing scope.
   is a re-render, not a re-run (§E0); wiring the two artefacts to real paths — where
   `results.json` and `report.html` get written, and the `--rebar` flag — belongs to the CLI
   phase (§E5).
+- The `bakeoff` exit-code contract is 0 worked / 1 the bar was missed / 2 the audition is
+  misconfigured (§F0).
+- `init` writes no lockfile because freezing is a deliberate separate step (§F3).
+- The README hero screenshot is the one open item and is human-gated.
