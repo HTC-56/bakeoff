@@ -84,3 +84,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-29T01:50:44	loop	qwen	commit	100	14013	45	6	1115	- [ ] §G3 — New `tests/test_quickstart_path.py`: walk the README quickstart with
 2026-08-29T02:06:13	loop	qwen	no-op	125	26289	59	8	928	- [ ] §G4 — Second class in `tests/test_quickstart_path.py`: freeze, edit the bar, assert
 2026-08-29T02:13:48	loop	qwen	commit	141	36371	63	9	454	- [ ] §G5 — Write `scripts/live-check.sh`, mirroring `scripts/scrub-check.sh`: the
+2026-08-29T02:19:41	loop	qwen	commit	102	21349	43	7	352	- [ ] §G6 — `README.md`: add `## Auditing a real endpoint`, and fix `## Development`,
