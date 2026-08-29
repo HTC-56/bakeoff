@@ -17,8 +17,16 @@ from typing import Any
 
 import pytest
 
-from bakeoff.freeze import FreezeCheck, FreezeStatus
-from bakeoff.manifest import Thresholds
+from bakeoff.freeze import (
+    FreezeCheck,
+    FreezeStatus,
+    check_freeze,
+    freeze_bar,
+    lockfile_path,
+    read_lockfile,
+    write_lockfile,
+)
+from bakeoff.manifest import Thresholds, load_manifest
 from bakeoff.report import (
     REPORT_VERSION,
     ReportError,
@@ -371,3 +379,59 @@ class TestSpend:
         html = render_report(document)
         assert "Scoreboard" in html
         assert "Spend" in html
+
+
+class TestRebarredReport:
+    """Prove REBARRED branding from a manifest frozen then edited on disk.
+
+    Tests only — no source changes. Mirrors ``TestRebarredEndToEnd`` in
+    ``tests/test_freeze.py``, but asserts on the rendered report page, not
+    the freeze check.
+    """
+
+    def test_rebarred_report(self, tmp_path: Path) -> None:
+        # Copy the example manifest text onto tmp_path.
+        example_manifest = (
+            Path(__file__).resolve().parent.parent / "examples" / "quickstart" / "audition.yaml"
+        )
+        manifest_path = tmp_path / "audition.yaml"
+        manifest_path.write_text(example_manifest.read_text())
+
+        # Load, freeze, and write the lockfile.
+        manifest = load_manifest(manifest_path)
+        lock = freeze_bar(manifest, manifest_path=manifest_path)
+        lock_path = lockfile_path(manifest_path)
+        write_lockfile(lock_path, lock)
+
+        # 1. Report of the frozen manifest contains FROZEN, not REBARRED.
+        frozen_check = check_freeze(manifest.bar, read_lockfile(lock_path))
+        frozen_doc = make_document(freeze=frozen_check)
+        frozen_html = render_report(frozen_doc)
+        assert "FROZEN" in frozen_html
+        assert "REBARRED" not in frozen_html
+
+        # 2. Lower the bar: rewrite min_pass_rate: 0.8 → min_pass_rate: 0.5.
+        edited = manifest_path.read_text().replace("min_pass_rate: 0.8", "min_pass_rate: 0.5", 1)
+        manifest_path.write_text(edited)
+        edited_manifest = load_manifest(manifest_path)
+
+        rebarred_check = check_freeze(edited_manifest.bar, read_lockfile(lock_path))
+        assert rebarred_check.status == FreezeStatus.REBARRED
+
+        # 3. Report of the rebarred manifest contains REBARRED.
+        rebarred_doc = make_document(freeze=rebarred_check)
+        rebarred_html = render_report(rebarred_doc)
+        assert "REBARRED" in rebarred_html
+
+        # 4. Contains both the lockfile's bar_hash and the current check's current_hash,
+        #    and those two strings differ.
+        lock = read_lockfile(lock_path)
+        assert lock.bar_hash in rebarred_html
+        assert rebarred_check.current_hash in rebarred_html
+        assert lock.bar_hash != rebarred_check.current_hash
+
+        # 5. It also names --rebar, so a reader learns how the run was allowed.
+        assert "--rebar" in rebarred_html
+
+        # 6. Rendering the same rebarred document twice gives identical strings.
+        assert render_report(rebarred_doc) == render_report(rebarred_doc)
