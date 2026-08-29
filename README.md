@@ -1,5 +1,7 @@
 # bakeoff
 
+[![ci](https://github.com/HTC-56/bakeoff/actions/workflows/ci.yml/badge.svg)](https://github.com/HTC-56/bakeoff/actions/workflows/ci.yml)
+
 Model selection by pre-registered audition, not vibes. Declare the candidate models,
 the task suites, the graders, and the pass bar before any model runs; then the runner
 produces a scored report an engineer can re-execute and a manager can read. The freeze
