@@ -146,7 +146,7 @@ your own section and build it.
 - [x] |- §F2 — Add the `freeze` command to `src/bakeoff/cli.py`, writing the lockfile
   beside the manifest and saying whether the bar was new, unchanged or moved.
   `TestFreezeCommand` in `tests/test_cli.py`. Gate: §F0.
-- [ ] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five
+- [x] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five
   case files as constants, plus `write_scaffold`) and `tests/test_templates.py`.
   Content mirrors `examples/quickstart/`. Gate: §F0.
 - [ ] §F4 — Add the `init` command to `src/bakeoff/cli.py`, calling `write_scaffold`
