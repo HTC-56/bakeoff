@@ -67,3 +67,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T21:02:43	plan	?	chat-exit	0	0	0	0	0	plan next phase
 2026-08-28T21:15:55	plan	claude	commit	48	106615	26	0	516	plan next phase
 2026-08-28T21:18:34	loop	qwen	commit	64	9394	24	6	169	- [ ] §E1 — Add `_case_drilldown` to `src/bakeoff/report.py` (one `<details>` per pair,
+2026-08-28T21:27:39	loop	qwen	commit	128	19846	49	16	544	- [ ] §E2 — Add `_spend` to `src/bakeoff/report.py`: per-candidate token totals plus
