@@ -122,7 +122,7 @@ build it.
 - [x] §E3 — Prove REBARRED branding from a manifest frozen then edited on disk:
   `TestRebarredReport` in `tests/test_report.py`, mirroring `TestRebarredEndToEnd` in
   `tests/test_freeze.py`. Tests only. Gate: §E0.
-- [ ] §E4 — Assert the report is one self-contained file: no `<script>`, `<link>`,
+- [x] §E4 — Assert the report is one self-contained file: no `<script>`, `<link>`,
   `@import`, `url(` or external URL, and a re-render never changes it.
   `TestSelfContained` in `tests/test_report.py`. Tests only. Gate: §E0.
 - [ ] |- §E5 — New `tests/test_report_end_to_end.py`: run the quickstart audition

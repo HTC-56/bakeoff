@@ -435,3 +435,50 @@ class TestRebarredReport:
 
         # 6. Rendering the same rebarred document twice gives identical strings.
         assert render_report(rebarred_doc) == render_report(rebarred_doc)
+
+
+class TestSelfContained:
+    """Assert the report is one self-contained file: no <script>, <link>,
+
+    @import, url( or external URL, and a re-render never changes it.
+    """
+
+    def test_no_external_references_in_rendered_page(self) -> None:
+        document = make_document()
+        html = render_report(document)
+        assert "http://" not in html
+        assert "https://" not in html
+        assert "<script" not in html
+        assert "<link" not in html
+        assert "@import" not in html
+        assert "url(" not in html
+
+    def test_exactly_one_style_block(self) -> None:
+        document = make_document()
+        html = render_report(document)
+        assert html.count("<style>") == 1
+
+    def test_re_render_is_identical(self) -> None:
+        document = make_document()
+        first = render_report(document)
+        second = render_report(document)
+        assert first == second
+
+    def test_write_read_re_render_is_identical(self, tmp_path: Path) -> None:
+        document = make_document()
+        original = render_report(document)
+
+        # Write results and read back, then render the re-read document.
+        results_path = tmp_path / "results.json"
+        write_results(results_path, document)
+        re_read = read_results(results_path)
+        re_rendered = render_report(re_read)
+
+        assert re_rendered == original
+
+    def test_url_in_completion_escapes_without_link(self) -> None:
+        outcome = make_outcome(completion="see http://example.com/x")
+        document = make_document(outcomes=[outcome])
+        html = render_report(document)
+        assert "<a " not in html
+        assert "http://example.com/x" in html  # escaped text is fine
