@@ -78,3 +78,5 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T23:54:11	loop	qwen	commit	117	20413	46	9	1344	- [ ] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five
 2026-08-29T00:10:49	loop	qwen	commit	132	22336	55	10	996	- [ ] §F4 — Add the `init` command to `src/bakeoff/cli.py`, calling `write_scaffold`
 2026-08-29T00:42:30	loop	qwen	commit	239	45603	95	22	1900	- [ ] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
+2026-08-29T00:55:13	plan	claude	commit	69	99946	38	4	500	plan next phase
+2026-08-29T01:13:49	loop	qwen	commit	43	5792	16	5	1155	- [ ] §G1 — Fix `write_scaffold` in `src/bakeoff/templates.py` so it creates the target

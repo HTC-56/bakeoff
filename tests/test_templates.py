@@ -71,3 +71,39 @@ class TestWriteScaffold:
         # with force=True it succeeds
         paths = write_scaffold(tmp_path, force=True)
         assert len(paths) == 6
+
+
+class TestWriteScaffoldMkdir:
+    def test_deeply_nested_directory_is_created(self, tmp_path: Path) -> None:
+        """write_scaffold creates a directory that does not exist yet."""
+        dest = tmp_path / "a" / "b"
+        assert not dest.exists()
+        paths = write_scaffold(dest)
+        assert len(paths) == 6
+        for p in paths:
+            assert p.exists(), f"{p} was not written"
+
+    def test_two_levels_deep_nested_also_works(self, tmp_path: Path) -> None:
+        """A deeper nesting level (three segments) also works."""
+        dest = tmp_path / "x" / "y" / "z"
+        assert not dest.exists()
+        paths = write_scaffold(dest)
+        assert len(paths) == 6
+        for p in paths:
+            assert p.exists(), f"{p} was not written"
+
+    def test_twice_without_force_raises_naming_manifest(self, tmp_path: Path) -> None:
+        """Second call without force raises; message names audition.yaml."""
+        dest = tmp_path / "one"
+        write_scaffold(dest)
+        with pytest.raises(TemplateError, match=r"audition\.yaml.*already exists"):
+            write_scaffold(dest)
+
+    def test_twice_with_force_succeeds(self, tmp_path: Path) -> None:
+        """force=True rewrites all six files on a second call."""
+        dest = tmp_path / "two"
+        write_scaffold(dest)
+        paths = write_scaffold(dest, force=True)
+        assert len(paths) == 6
+        for p in paths:
+            assert p.exists(), f"{p} was not written"

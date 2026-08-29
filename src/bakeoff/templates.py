@@ -99,6 +99,9 @@ def write_scaffold(directory: str | Path, *, force: bool = False) -> list[Path]:
     base = Path(directory)
     paths: list[Path] = []
 
+    # ensure the base directory exists before writing anything
+    base.mkdir(parents=True, exist_ok=True)
+
     # manifest first
     manifest_path = base / "audition.yaml"
     if not force and manifest_path.exists():

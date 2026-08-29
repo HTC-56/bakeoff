@@ -172,7 +172,7 @@ named by SPEC.md, DECISIONS.md and the README but was never written. Read **§G0
 TASK_PHASE_G.md first** — gate, conventions, and the test helpers you must reuse.
 Then grep your own section and build it.
 
-- [ ] §G1 — Fix `write_scaffold` in `src/bakeoff/templates.py` so it creates the target
+- [x] §G1 — Fix `write_scaffold` in `src/bakeoff/templates.py` so it creates the target
   directory before writing `audition.yaml`. New class in `tests/test_templates.py`.
   Gate: §G0's five commands.
 - [ ] §G2 — Reword the REBARRED `FreezeError` message in `src/bakeoff/freeze.py` — "bar
