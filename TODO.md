@@ -151,7 +151,7 @@ your own section and build it.
   Content mirrors `examples/quickstart/`. Gate: §F0.
 - [x] §F4 — Add the `init` command to `src/bakeoff/cli.py`, calling `write_scaffold`
   with a `--force` flag. `TestInitCommand` in `tests/test_cli.py`. Gate: §F0.
-- [ ] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
+- [x] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
   freeze mechanic` sections; every command shown must really exist. Docs only. Gate:
   `bash verify.sh` green.
 - [ ] |- §F6 — Write `scripts/readme-lint.sh` (every `bakeoff` command the README
