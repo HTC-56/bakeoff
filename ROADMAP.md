@@ -55,3 +55,7 @@ planning lane declares PROJECT SPEC COMPLETE rather than inventing scope.
   thing in the repo that makes a network call (§G7).
 - The README hero screenshot remains the single open item and needs a human with a
   browser (§G6).
+- The CI badge is committed and points at the `ci` workflow on the origin remote; it
+  serves a broken image until the repo is public, so "CI badge green" is proven by the
+  Actions history, not by the rendered README (§G9). Every row above is now SHIPPED —
+  see `NEEDS_HUMAN.md` for the terminal declaration.
