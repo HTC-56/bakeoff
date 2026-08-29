@@ -116,7 +116,7 @@ build it.
 - [x] §E1 — Add `_case_drilldown` to `src/bakeoff/report.py` (one `<details>` per pair,
   the actual completions, escaped) and add it to the `sections` list;
   `TestCaseDrilldown` in `tests/test_report.py`. Gate: §E0's five commands.
-- [ ] §E2 — Add `_spend` to `src/bakeoff/report.py`: per-candidate token totals plus
+- [x] §E2 — Add `_spend` to `src/bakeoff/report.py`: per-candidate token totals plus
   p50/p95/slowest latency from `scoring.percentile`; add it to `sections`. `TestSpend`
   in `tests/test_report.py`. Gate: §E0.
 - [ ] §E3 — Prove REBARRED branding from a manifest frozen then edited on disk:

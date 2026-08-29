@@ -22,6 +22,7 @@ from bakeoff.manifest import Thresholds
 from bakeoff.report import (
     REPORT_VERSION,
     ReportError,
+    _ms,
     read_results,
     render_report,
     results_document,
@@ -29,7 +30,7 @@ from bakeoff.report import (
     write_results,
 )
 from bakeoff.runner import CaseOutcome, RunResults
-from bakeoff.scoring import PairSummary, PairVerdict
+from bakeoff.scoring import PairSummary, PairVerdict, percentile
 
 # --- helpers ----------------------------------------------------------------
 
@@ -326,3 +327,47 @@ class TestCaseDrilldown:
         html = render_report(make_document(outcomes=[outcome]))
         assert "boom" in html
         assert "case-fail" in html
+
+
+class TestSpend:
+    def test_two_candidates_render_two_rows(self) -> None:
+        outcomes = [
+            make_outcome(candidate="alpha", case_id="a1"),
+            make_outcome(candidate="beta", case_id="b1"),
+        ]
+        html = render_report(make_document(outcomes=outcomes))
+        assert "<td>alpha</td>" in html
+        assert "<td>beta</td>" in html
+
+    def test_total_tokens_cell_equals_hand_sum(self) -> None:
+        outcomes = [
+            make_outcome(case_id="a1", prompt_tokens=3, completion_tokens=1),
+            make_outcome(case_id="a2", prompt_tokens=5, completion_tokens=2),
+        ]
+        document = make_document(outcomes=outcomes)
+        html = render_report(document)
+        total = sum(c["total_tokens"] for c in document["cases"])
+        assert f"<td>{total}</td>" in html
+
+    def test_p95_cell_matches_percentile(self) -> None:
+        outcomes = [
+            make_outcome(case_id="a1", latency_ms=10.0),
+            make_outcome(case_id="a2", latency_ms=20.0),
+            make_outcome(case_id="a3", latency_ms=30.0),
+        ]
+        document = make_document(outcomes=outcomes)
+        html = render_report(document)
+        latencies = [float(c["latency_ms"]) for c in document["cases"]]
+        expected_p95 = percentile(latencies, 0.95)
+        assert f"<td>{_ms(expected_p95)}</td>" in html
+
+    def test_empty_document_renders_muted_note(self) -> None:
+        document = make_document(outcomes=[], verdicts=[])
+        html = render_report(document)
+        assert "No cases were run" in html
+
+    def test_spend_does_not_replace_scoreboard(self) -> None:
+        document = make_document()
+        html = render_report(document)
+        assert "Scoreboard" in html
+        assert "Spend" in html

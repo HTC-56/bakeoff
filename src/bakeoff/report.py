@@ -39,7 +39,7 @@ from typing import Any
 from .errors import ConfigError
 from .freeze import FreezeCheck
 from .runner import CaseOutcome, RunResults
-from .scoring import PairVerdict, exit_code
+from .scoring import PairVerdict, exit_code, percentile
 
 REPORT_VERSION = 1
 """Bumped only when the shape of results.json changes; older files then fail to read."""
@@ -388,6 +388,74 @@ def _case_drilldown(document: Mapping[str, Any]) -> str:
     return "<section>\n<h2>Cases</h2>\n" + "\n".join(blocks) + "\n</section>"
 
 
+def _spend(document: Mapping[str, Any]) -> str:
+    """Per-candidate token totals plus p50/p95/slowest latency from scoring.percentile.
+
+    One row per candidate, in first-seen order over ``document["cases"]``. Columns:
+    candidate, cases, errors, prompt tokens, completion tokens, total tokens, p50,
+    p95, slowest.
+
+    A document with no cases renders a muted note instead of a table.
+    """
+    cases = document["cases"]
+    if not cases:
+        return '<section><h2>Spend</h2><p class="muted">No cases were run.</p></section>'
+
+    # Group by candidate in first-seen order.
+    groups: dict[str, list[dict[str, Any]]] = {}
+    order: list[str] = []
+    for case in cases:
+        cand = case["candidate"]
+        if cand not in groups:
+            groups[cand] = []
+            order.append(cand)
+        groups[cand].append(case)
+
+    rows: list[list[str]] = []
+    for cand in order:
+        candidate_cases = groups[cand]
+        num_cases = len(candidate_cases)
+        errors = sum(1 for c in candidate_cases if c["errored"])
+        prompt_tokens = sum(c["prompt_tokens"] for c in candidate_cases)
+        completion_tokens = sum(c["completion_tokens"] for c in candidate_cases)
+        total_tokens = sum(c["total_tokens"] for c in candidate_cases)
+
+        latencies = [float(c["latency_ms"]) for c in candidate_cases]
+        p50 = percentile(latencies, 0.5)
+        p95 = percentile(latencies, 0.95)
+        slowest = max(latencies)
+
+        rows.append(
+            [
+                _esc(cand),
+                _esc(num_cases),
+                _esc(errors),
+                _esc(prompt_tokens),
+                _esc(completion_tokens),
+                _esc(total_tokens),
+                _ms(p50),
+                _ms(p95),
+                _ms(slowest),
+            ]
+        )
+
+    table = _table(
+        [
+            "candidate",
+            "cases",
+            "errors",
+            "prompt tokens",
+            "completion tokens",
+            "total tokens",
+            "p50",
+            "p95",
+            "slowest",
+        ],
+        rows,
+    )
+    return f"<section>\n<h2>Spend</h2>\n{table}\n</section>"
+
+
 # --- the page ---------------------------------------------------------------
 
 _STYLE = """
@@ -496,6 +564,7 @@ def render_report(document: Mapping[str, Any]) -> str:
         _freeze_banner(document),
         _scoreboard(document),
         _case_drilldown(document),
+        _spend(document),
     ]
     return _page(f"bakeoff — {document['manifest']}", "\n".join(sections))
 
