@@ -178,7 +178,7 @@ Then grep your own section and build it.
 - [x] §G2 — Reword the REBARRED `FreezeError` message in `src/bakeoff/freeze.py` — "bar
   rebars since freeze" is not English. Update `TestRequireFreeze` and any pinned match
   strings. Gate: §G0.
-- [ ] §G3 — New `tests/test_quickstart_path.py`: walk the README quickstart with
+- [x] §G3 — New `tests/test_quickstart_path.py`: walk the README quickstart with
   `invoke`, starting from a directory that does not exist. Tests only. Gate: §G0.
 - [ ] §G4 — Second class in `tests/test_quickstart_path.py`: freeze, edit the bar, assert
   `run` exits 2 and `run --rebar` brands the report REBARRED. Tests only. Gate: §G0.
