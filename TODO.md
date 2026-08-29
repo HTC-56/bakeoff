@@ -182,7 +182,7 @@ Then grep your own section and build it.
   `invoke`, starting from a directory that does not exist. Tests only. Gate: §G0.
 - [x] |- §G4 — Second class in `tests/test_quickstart_path.py`: freeze, edit the bar, assert
   `run` exits 2 and `run --rebar` brands the report REBARRED. Tests only. Gate: §G0.
-- [ ] §G5 — Write `scripts/live-check.sh`, mirroring `scripts/scrub-check.sh`: the
+- [x] §G5 — Write `scripts/live-check.sh`, mirroring `scripts/scrub-check.sh`: the
   human-run real-endpoint proof, driven by `$BAKEOFF_BASE_URL` and `$BAKEOFF_MODEL`.
   Gate: §G0 plus the script's own usage exit.
 - [ ] §G6 — `README.md`: add `## Auditing a real endpoint`, and fix `## Development`,
