@@ -113,7 +113,7 @@ TASK_PHASE_E.md first** — gate, typing rules, the `sections` anchor in
 `render_report`, and an index of what E0 gives you. Then grep your own section and
 build it.
 
-- [ ] §E1 — Add `_case_drilldown` to `src/bakeoff/report.py` (one `<details>` per pair,
+- [x] §E1 — Add `_case_drilldown` to `src/bakeoff/report.py` (one `<details>` per pair,
   the actual completions, escaped) and add it to the `sections` list;
   `TestCaseDrilldown` in `tests/test_report.py`. Gate: §E0's five commands.
 - [ ] §E2 — Add `_spend` to `src/bakeoff/report.py`: per-candidate token totals plus

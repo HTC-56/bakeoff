@@ -295,3 +295,34 @@ class TestWriteReport:
         path = tmp_path / "out" / "report.html"
         write_report(path, document)
         assert path.read_text() == render_report(document)
+
+
+class TestCaseDrilldown:
+    def test_details_block_names_suite_and_candidate(self) -> None:
+        html = render_report(make_document())
+        assert "<details>" in html
+        assert "smoke / stub" in html
+
+    def test_every_case_id_appears_in_the_page(self) -> None:
+        outcomes = [
+            make_outcome(case_id="alpha", completion="1"),
+            make_outcome(case_id="beta", completion="2"),
+        ]
+        html = render_report(make_document(outcomes=outcomes))
+        assert "alpha" in html
+        assert "beta" in html
+
+    def test_completion_text_appears_in_the_page(self) -> None:
+        html = render_report(make_document(outcomes=[make_outcome(completion="hello world")]))
+        assert "hello world" in html
+
+    def test_html_in_completion_is_escaped(self) -> None:
+        html = render_report(make_document(outcomes=[make_outcome(completion="<b>hi</b>")]))
+        assert "&lt;b&gt;" in html
+        assert "<b>hi</b>" not in html
+
+    def test_error_case_shows_error_text_and_case_fail(self) -> None:
+        outcome = make_outcome(error="boom")
+        html = render_report(make_document(outcomes=[outcome]))
+        assert "boom" in html
+        assert "case-fail" in html

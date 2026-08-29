@@ -332,6 +332,62 @@ def _scoreboard(document: Mapping[str, Any]) -> str:
     return f"<section>\n<h2>Scoreboard</h2>\n{table}\n</section>"
 
 
+def _case_drilldown(document: Mapping[str, Any]) -> str:
+    """One collapsible block per suite x candidate pair: the actual completions.
+
+    Groups cases from ``document["cases"]`` by (suite, candidate) in first-seen order,
+    then renders a ``<details>`` block per pair. Inside, a table shows every case with
+    its outcome, latency, token count, the completion text, and the grader's detail.
+    Every value is escaped — the completion is untrusted text.
+    """
+    cases = document["cases"]
+    if not cases:
+        return '<section><h2>Cases</h2><p class="muted">No cases were run.</p></section>'
+
+    # Group by (suite, candidate) in first-seen order.
+    groups: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    order: list[tuple[str, str]] = []
+    for case in cases:
+        key = (case["suite"], case["candidate"])
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(case)
+
+    blocks: list[str] = []
+    for suite, candidate in order:
+        pair_cases = groups[(suite, candidate)]
+        passed = sum(1 for c in pair_cases if c["passed"])
+        total = len(pair_cases)
+        summary_text = f"{_esc(suite)} / {_esc(candidate)} — {passed} of {total} passed"
+
+        rows: list[list[str]] = []
+        row_classes: list[str] = []
+        for case in pair_cases:
+            case_id = _esc(case["case_id"])
+            badge = _badge(case["passed"])
+            latency = _ms(case["latency_ms"])
+            tokens = _esc(case["total_tokens"])
+            detail = _esc(case["detail"])
+
+            if case["errored"]:
+                completion = f'<span class="error">{_esc(case["error"])}</span>'
+            else:
+                completion = f'<span class="completion">{_esc(case["completion"])}</span>'
+
+            rows.append([case_id, badge, latency, tokens, completion, detail])
+            row_classes.append("case-fail" if not case["passed"] else "")
+
+        table = _table(
+            ["case", "passed", "latency", "tokens", "completion", "detail"],
+            rows,
+            row_classes=row_classes,
+        )
+        blocks.append(f"<details><summary>{summary_text}</summary>\n{table}\n</details>")
+
+    return "<section>\n<h2>Cases</h2>\n" + "\n".join(blocks) + "\n</section>"
+
+
 # --- the page ---------------------------------------------------------------
 
 _STYLE = """
@@ -439,6 +495,7 @@ def render_report(document: Mapping[str, Any]) -> str:
         _header(document),
         _freeze_banner(document),
         _scoreboard(document),
+        _case_drilldown(document),
     ]
     return _page(f"bakeoff — {document['manifest']}", "\n".join(sections))
 
