@@ -39,7 +39,15 @@ import click
 
 from . import __version__
 from .errors import ConfigError
-from .freeze import FreezeCheck, check_freeze, find_lockfile, require_freeze
+from .freeze import (
+    FreezeCheck,
+    check_freeze,
+    find_lockfile,
+    freeze_bar,
+    lockfile_path,
+    require_freeze,
+    write_lockfile,
+)
 from .ledger import LEDGER_FILENAME, append_run, run_record
 from .manifest import Audition, load_audition
 from .report import read_results, results_document, write_report, write_results
@@ -150,6 +158,27 @@ def validate(manifest: Path) -> None:
     for s in audition.suites:
         click.echo(f"  suite: {s.name}  ({len(s)} case(s))")
     click.echo(f"  freeze: {describe_freeze(check)}")
+
+
+@main.command()
+@_MANIFEST_ARGUMENT
+def freeze(manifest: Path) -> None:
+    """Pre-register the bar in a lockfile beside the manifest.
+
+    Always succeeds — deliberately re-registering a new bar is the honest move.
+    """
+    with fixable():
+        audition = load(manifest)
+    old_check = freeze_state(audition, manifest)
+    lock = freeze_bar(audition.manifest, manifest_path=manifest)
+    write_lockfile(lockfile_path(manifest), lock)
+    click.echo(f"wrote {lockfile_path(manifest)}  {lock.bar_hash}")
+    if old_check.status.value == "frozen" and old_check.frozen_hash == lock.bar_hash:
+        click.echo("  bar unchanged — already frozen")
+    elif old_check.frozen_hash is None:
+        click.echo("  bar: new freeze")
+    else:
+        click.echo(f"  bar: moved from {old_check.frozen_hash}")
 
 
 @main.command()

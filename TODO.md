@@ -143,7 +143,7 @@ your own section and build it.
 - [x] |- §F1 — Add the `validate` command to `src/bakeoff/cli.py`: print the candidates,
   the suites, the case count and the freeze state, never failing on the freeze.
   `TestValidateCommand` in `tests/test_cli.py`. Gate: §F0's five commands.
-- [ ] §F2 — Add the `freeze` command to `src/bakeoff/cli.py`, writing the lockfile
+- [x] |- §F2 — Add the `freeze` command to `src/bakeoff/cli.py`, writing the lockfile
   beside the manifest and saying whether the bar was new, unchanged or moved.
   `TestFreezeCommand` in `tests/test_cli.py`. Gate: §F0.
 - [ ] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five

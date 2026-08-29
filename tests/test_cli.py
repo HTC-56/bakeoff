@@ -276,3 +276,102 @@ class TestValidateCommand:
         assert result.exit_code == CONFIG_EXIT_CODE
         assert "cannot read manifest" in result.output
         assert "Traceback" not in result.output
+
+
+class TestFreezeCommand:
+    """`bakeoff freeze` — pre-register the bar in a lockfile."""
+
+    def test_freeze_writes_lockfile_and_exits_zero(self) -> None:
+        dest = Path("tmp_freeze_w")
+        dest.mkdir(exist_ok=True)
+        try:
+            manifest = copy_quickstart(dest / "audition")
+            lockfile = dest / "audition" / "audition.lock"
+            lockfile.unlink(missing_ok=True)
+            result = invoke("freeze", str(manifest))
+            assert result.exit_code == 0, result.output
+            assert lockfile.is_file()
+            assert "sha256:" in result.output
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_frozen_lockfile_passes_check(self) -> None:
+        from bakeoff.freeze import FreezeStatus, check_freeze, find_lockfile
+        from bakeoff.manifest import load_audition
+
+        dest = Path("tmp_freeze_c")
+        dest.mkdir(exist_ok=True)
+        try:
+            manifest = copy_quickstart(dest / "audition")
+            lockfile = dest / "audition" / "audition.lock"
+            lockfile.unlink(missing_ok=True)
+            invoke("freeze", str(manifest))
+            audition = load_audition(manifest)
+            lock = find_lockfile(manifest)
+            check = check_freeze(audition.manifest.bar, lock)
+            assert check.status == FreezeStatus.FROZEN
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_output_holds_sha256_hash(self) -> None:
+        dest = Path("tmp_freeze_sha")
+        dest.mkdir(exist_ok=True)
+        try:
+            manifest = copy_quickstart(dest / "audition")
+            lockfile = dest / "audition" / "audition.lock"
+            lockfile.unlink(missing_ok=True)
+            result = invoke("freeze", str(manifest))
+            assert "sha256:" in result.output
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_refreeze_unchanged_bar_keeps_same_hash(self) -> None:
+        import yaml
+
+        dest = Path("tmp_freeze_r")
+        dest.mkdir(exist_ok=True)
+        try:
+            manifest = copy_quickstart(dest / "audition")
+            lockfile = dest / "audition" / "audition.lock"
+            lockfile.unlink(missing_ok=True)
+            result1 = invoke("freeze", str(manifest))
+            result2 = invoke("freeze", str(manifest))
+            assert result1.exit_code == 0, result1.output
+            assert result2.exit_code == 0, result2.output
+            h1 = yaml.safe_load(lockfile.read_text())["bar_hash"]
+            h2 = yaml.safe_load(lockfile.read_text())["bar_hash"]
+            assert h1 == h2
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_freeze_after_bar_change_writes_new_hash(self) -> None:
+        dest = Path("tmp_freeze_m")
+        dest.mkdir(exist_ok=True)
+        try:
+            manifest = copy_quickstart(dest / "audition")
+            lockfile = dest / "audition" / "audition.lock"
+            lockfile.unlink(missing_ok=True)
+            invoke("freeze", str(manifest))
+            hash_before = lockfile.read_text()
+            lower_the_bar(manifest)
+            result = invoke("freeze", str(manifest))
+            hash_after = lockfile.read_text()
+            assert result.exit_code == 0, result.output
+            assert hash_before != hash_after
+        finally:
+            import shutil
+
+            shutil.rmtree(dest, ignore_errors=True)
+
+    def test_missing_manifest_exits_config_code(self) -> None:
+        result = invoke("freeze", "/tmp/does/not/exist/audition.yaml")
+        assert result.exit_code == CONFIG_EXIT_CODE
+        assert "Traceback" not in result.output
