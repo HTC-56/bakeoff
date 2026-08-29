@@ -12,6 +12,10 @@ dependencies = [
     "pyyaml>=6.0",
 ]
 
+# The CLI is the product: `bakeoff` on PATH after `uv sync`. SPEC.md feature 7.
+[project.scripts]
+bakeoff = "bakeoff.cli:main"
+
 [dependency-groups]
 dev = [
     "mypy>=1.11",
