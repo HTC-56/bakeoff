@@ -187,7 +187,7 @@ Then grep your own section and build it.
   Gate: §G0 plus the script's own usage exit.
 - [x] §G6 — `README.md`: add `## Auditing a real endpoint`, and fix `## Development`,
   which still says five gates when there are six. Docs only. Gate: `bash verify.sh` 6/6.
-- [ ] §G7 — Add a script-path check to `scripts/readme-lint.sh` and a `readme-lint` step
+- [x] §G7 — Add a script-path check to `scripts/readme-lint.sh` and a `readme-lint` step
   to `.github/workflows/ci.yml`. Gate: `bash verify.sh` 6/6.
 - [ ] |- §G8 — Run `bash verify.sh`, then append a Phase G section to `STATUS.md` and
   flip rows 7 and 9 in `ROADMAP.md` back to SHIPPED, plus three reservations ledger

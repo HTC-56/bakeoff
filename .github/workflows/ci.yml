@@ -37,3 +37,6 @@ jobs:
 
       - name: scrub-check
         run: bash scripts/scrub-check.sh
+
+      - name: readme-lint
+        run: bash scripts/readme-lint.sh

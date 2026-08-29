@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # readme-lint.sh — every bakeoff command the README shows must exist.
 #
-# Two checks against README.md:
+# Three checks against README.md:
 #   1. Every `bakeoff <subcommand>` is a real click command.
 #   2. Every `python -m bakeoff.<module>` names an existing module file.
+#   3. Every `scripts/<name>.sh` path names an existing file in the repo.
 #
 # Exits non-zero on any hit.
 
@@ -33,12 +34,21 @@ while IFS= read -r line; do
   fi
 done < <(grep -oE 'python -m bakeoff\.[a-z]+' README.md | sort -u)
 
+# 3. Every scripts/<name>.sh path the README mentions must exist.
+while IFS= read -r line; do
+  script="${line#scripts/}"
+  if [ ! -f "scripts/${script}" ]; then
+    report "missing script: $script" "$line"
+  fi
+done < <(grep -oE 'scripts/[a-z_-]+\.sh' README.md | sort -u)
+
 if [ "$fail" -ne 0 ]; then
-  printf '\nreadme-lint FAILED — commands or modules above are missing.\n'
+  printf '\nreadme-lint FAILED — commands, modules, or scripts above are missing.\n'
   exit 1
 fi
 
-printf 'readme-lint: clean (%s commands/modules checked)\n' \
+printf 'readme-lint: clean (%s commands/modules/scripts checked)\n' \
   "$(cat <(grep -oE '\bbakeoff [a-z]+' README.md | sort -u) \
          <(grep -oE 'python -m bakeoff\.[a-z]+' README.md | sort -u) \
+         <(grep -oE 'scripts/[a-z_-]+\.sh' README.md | sort -u) \
          | sort -u | wc -l | tr -d ' ')"
