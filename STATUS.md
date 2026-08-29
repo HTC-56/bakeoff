@@ -41,3 +41,12 @@ Phase D shipped the freeze module (`freeze.py`: bar hashing, `Lockfile` model, r
 (`require_freeze` with `--rebar`), the quickstart lockfile (`audition.lock`), the bar hash
 recorded in the ledger per run, and a REBARRED end-to-end proof in
 `TestRebarredEndToEnd`. Still missing: the report, the CLI, `docs/PROCESS.md`.
+
+## Phase E
+
+Phase E shipped the report module (`report.py`: `results.json` read/write, the
+self-contained HTML page with freeze banner and scoreboard, the per-case drill-down,
+the spend table with p50/p95/slowest latency), the REBARRED branding proof in
+`TestRebarredReport`, the self-containment assertion in `TestSelfContained`, and the
+end-to-end pipeline test `TestReportEndToEnd`. Still missing: the CLI and
+`docs/PROCESS.md`.

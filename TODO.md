@@ -128,6 +128,6 @@ build it.
 - [x] |- §E5 — New `tests/test_report_end_to_end.py`: run the quickstart audition
   against the bundled stub, write `results.json` + `report.html` into `tmp_path`, and
   assert both. Tests only. Gate: §E0.
-- [ ] |- §E6 — Run `bash verify.sh`, then append a Phase E section to `STATUS.md` and
+- [x] |- §E6 — Run `bash verify.sh`, then append a Phase E section to `STATUS.md` and
   update rows 6 and 9 plus the reservations ledger in `ROADMAP.md`. Gate:
   `bash verify.sh` green.
