@@ -16,9 +16,9 @@ Built phase by phase by an autonomous coding loop. The CLI (`init`, `validate`,
 concurrency), the freeze mechanic (bar hashing, REBARRED branding), and the
 self-contained HTML report are all built and gated against the bundled stub.
 
-Two things are not: a hero screenshot (it needs a human with a browser) and any claim
-that a real, non-stub endpoint was audited — `scripts/live-check.sh` is run by a human,
-not by CI.
+The two human-only proofs are also done (2026-08-29): the hero screenshot below, and a
+real non-stub audition via `scripts/live-check.sh` — see "Auditing a real endpoint" and
+`docs/PROCESS.md` for the honest verdict.
 
 ## Quickstart
 
@@ -55,6 +55,8 @@ uv run bakeoff run myaudition/audition.yaml
 Open `report.html` — a self-contained HTML file with the scoreboard, case drilldowns,
 and token spend summary.
 
+![The report — bar met, frozen bar hash, scoreboard, spend](docs/report-hero.png)
+
 ## The freeze mechanic
 
 The freeze mechanic is bakeoff's whole point. Here is the honesty story:
@@ -86,8 +88,11 @@ set two environment variables and run `scripts/live-check.sh`:
 BAKEOFF_BASE_URL=http://localhost:8000 BAKEOFF_MODEL=gpt-4o bash scripts/live-check.sh
 ```
 
-This project has never run `live-check.sh` against a real model — the loop only ever
-audited the bundled stub. Any claim that a non-stub endpoint works is a human's to make.
+A human ran this on 2026-08-29 against a local Ollama server (`http://localhost:11434`,
+model `qwen38-bakeoff-64k`): the full non-stub pipeline executed — real HTTP calls, real
+completions, graders on real output — and returned an honest **bar MISSED** (4/5 cases,
+p95 78710 ms against a 2000 ms stub-era bar). The audition ran for real and the frozen
+bar held instead of bending. Details in `docs/PROCESS.md`.
 
 ## Requirements
 

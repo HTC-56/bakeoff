@@ -31,3 +31,10 @@ path, `live-check.sh`, the CI badge. See `ROADMAP.md` for per-feature coverage a
    makes a network call.
 4. **Any scope beyond SPEC.md v1.** The loop will not resume on its own. New scope must
    be locked in DECISIONS.md first; until then this file stands.
+
+## Progress 2026-08-29 (human)
+
+Items 2 and 3 are done: `docs/report-hero.png` is committed and referenced from
+the README, and `live-check.sh` ran against a real endpoint (local Ollama,
+`qwen38-bakeoff-64k`) — honest bar MISSED, recorded in `docs/PROCESS.md` and
+the README. Items 1 (publish) and 4 (new scope) remain open.

@@ -96,3 +96,18 @@ model sets the architecture and the executor proves it.
 
 Every number in this repo comes from the bundled stub. No real endpoint has been
 audited. `scripts/live-check.sh` is a human's job.
+
+## The real-endpoint proof (2026-08-29)
+
+`scripts/live-check.sh` has now been run by a human against a real
+OpenAI-compatible endpoint: a local Ollama server (`http://localhost:11434`),
+model `qwen38-bakeoff-64k`. The full pipeline ran non-stub — `init` scaffolded
+a throwaway audition, `freeze` locked the bar, `run` made real HTTP calls, the
+graders scored real completions, and the report was written.
+
+The verdict was honest, and that is the point: **4/5 passed, p95 78710 ms —
+bar MISSED.** The smoke bar (pass rate 1.00, p95 <= 2000 ms) was frozen for
+the instant stub; a real local model missed one grader case and sits ~40x over
+the latency bar, and the runner said so instead of bending. What this unlocks
+is exactly what the gate reserved: a non-stub audition ran end to end, and the
+bar mechanic held on real data.
