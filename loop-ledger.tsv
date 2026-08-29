@@ -77,3 +77,4 @@ time	lane	model	result	turns	out_tok	tools	edits	dur_s	task
 2026-08-28T23:31:46	loop	qwen	commit	120	19324	45	9	690	- [ ] §F2 — Add the `freeze` command to `src/bakeoff/cli.py`, writing the lockfile
 2026-08-28T23:54:11	loop	qwen	commit	117	20413	46	9	1344	- [ ] §F3 — Write `src/bakeoff/templates.py` (the quickstart manifest and the five
 2026-08-29T00:10:49	loop	qwen	commit	132	22336	55	10	996	- [ ] §F4 — Add the `init` command to `src/bakeoff/cli.py`, calling `write_scaffold`
+2026-08-29T00:42:30	loop	qwen	commit	239	45603	95	22	1900	- [ ] §F5 — Rewrite `## Status` in `README.md` and add `## Quickstart` and `## The
